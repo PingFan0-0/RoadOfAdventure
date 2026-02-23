@@ -1,4 +1,4 @@
-#include<iostream>
+ï»¿#include<iostream>
 #include<fstream>
 #include<string>
 #include<vector>
@@ -11,83 +11,87 @@
 
 #pragma warning(disable:4996)
 #pragma warning(disable:4267)
+#pragma warning(disable:26495)
 
-const std::wstring DataWayParent = L"GameData";//---ÎÄ¼ş¼ĞÂ·¾¶ "GameData" 
-const std::wstring SetWayParent = L"Set";//---------ÎÄ¼ş¼ĞÂ·¾¶ "Set" 
-const std::wstring DataParent = L"Data";//----------ÎÄ¼ş¼ĞÂ·¾¶ "Data" 
+const std::wstring DataWayParent = L"GameData";//----æ–‡ä»¶å¤¹è·¯å¾„
+const std::wstring SetWayParent  = L"Debug";//-------æ–‡ä»¶å¤¹è·¯å¾„ 
+const std::wstring DataParent    = L"Data";//--------æ–‡ä»¶å¤¹è·¯å¾„
 
 
-const std::string GameDataWay = "GameData/GameData.json";//---ÎÄ¼şÂ·¾¶¼°Ãû³Æ  
-const std::string SetDataWay = "Set/SetData.txt";//----------ÎÄ¼şÂ·¾¶¼°Ãû³Æ  
-const std::string DebugWay = "Set/Debug.txt";//--------------ÎÄ¼şÂ·¾¶¼°Ãû³Æ  
+const std::string GameDataWay = "GameData/GameData.json";//-----æ–‡ä»¶è·¯å¾„åŠåç§°  
+const std::string SetDataWay  = "GameData/SetData.json";//------æ–‡ä»¶è·¯å¾„åŠåç§°  
+const std::string DebugWay    = "Debug/Debug.txt";//------------æ–‡ä»¶è·¯å¾„åŠåç§°   
+const std::string ErrorWay    = "Debug/Error.txt";//------------æ–‡ä»¶è·¯å¾„åŠåç§°   
+const std::string WarnWay     = "Debug/Warn.txt";//-------------æ–‡ä»¶è·¯å¾„åŠåç§°  
 
-const std::string BeginMap = "Ã°ÏÕÖ®Â·.json";//--------------³õÊ¼µÄµØÍ¼ 
+const std::string BeginMap = "å†’é™©ä¹‹è·¯.json";//---------------åˆå§‹çš„åœ°å›¾ 
 
-const std::string NullText = "ÎŞ/Null";
+const std::string NullText = "æ— /Null";
 
-const int MapMaxSize = 55;//¶¨ÒåµØÍ¼ÄÚ´æµÄ´óĞ¡ 
+const int MapMaxSize = 55;//å®šä¹‰åœ°å›¾å†…å­˜çš„å¤§å° 
 
-//-1.ËÀÍöÒ³Ãæ 0.³õÊ¼Ò³Ãæ 1.ÓÎÏ·Ò³Ãæ 2.ÉèÖÃÒ³Ãæ  
-int cz = 0;//ÏÔÊ¾µÄÒ³Ãæ 
+//-1.æ­»äº¡é¡µé¢ 0.åˆå§‹é¡µé¢ 1.æ¸¸æˆé¡µé¢ 2.è®¾ç½®é¡µé¢  
+int cz = 0;//æ˜¾ç¤ºçš„é¡µé¢ 
 
-int BoolTheGame;//-----------ÓÎÏ·ÊÇ·ñÔËĞĞ 
-int BoolDebug = 1;//---------ÈÕÖ¾DebugÊÇ·ñ¿ªÆô
-int BoolZbxs = 1;//----------×ø±êÏÔÊ¾ÊÇ·ñ¿ªÆô 
-int BoolGameRunTime = 1;//---ÓÎÏ·Ê±¿ÌÏÔÊ¾ÊÇ·ñ¿ªÆô 
-int BoolFPS = 1;//-----------FPSÏÔÊ¾ÊÇ·ñ¿ªÆô
-int BoolMapMessage = 1;//----µØÍ¼ĞÅÏ¢ÏÔÊ¾ÊÇ·ñ¿ªÆô 
+bool BoolTheGame     = true;//------æ¸¸æˆæ˜¯å¦è¿è¡Œ 
+bool BoolDebug       = true;//------æ—¥å¿—Debugæ˜¯å¦å¼€å¯
+bool BoolZbxs        = true;//------åæ ‡æ˜¾ç¤ºæ˜¯å¦å¼€å¯ 
+bool BoolGameRunTime = true;//------æ¸¸æˆæ—¶åˆ»æ˜¾ç¤ºæ˜¯å¦å¼€å¯ 
+bool BoolFPS         = true;//------FPSæ˜¾ç¤ºæ˜¯å¦å¼€å¯
+bool BoolMapMessage  = true;//------åœ°å›¾ä¿¡æ¯æ˜¾ç¤ºæ˜¯å¦å¼€å¯ 
+bool BoolWarn        = false;//-----æ˜¯å¦æ˜¾ç¤ºè­¦å‘ŠçŠ¶æ€
 
-int FPS;//-------------------FPSÊıÖµ 
-int FPSWeek = 10;//----------FPSÑ­»·ÖÜÆÚ 
-long GameRunTime = 0;//------ÓÎÏ·Ê±¿Ì 
-clock_t LastTime;//----------ÉÏ´ÎÊ±¼ä 
-int JGTime;//----------------¼ä¸ôµÄÊ±¼ä
+int FPS;//------------------------FPSæ•°å€¼ 
+int FPSWeek = 10;//---------------FPSå¾ªç¯å‘¨æœŸ 
+long long GameRunTime = 0;//------æ¸¸æˆæ—¶åˆ» 
+clock_t LastTime;//---------------ä¸Šæ¬¡æ—¶é—´ 
+int JGTime;//---------------------é—´éš”çš„æ—¶é—´
 
-struct SP{//StructPlayer µÄËõĞ´   Íæ¼ÒĞÅÏ¢ 
-	int LastX,LastY;//-------Íæ¼ÒÉÏ´ÎµÄÎ»ÖÃ 
-	int NextX,NextY;//-------Íæ¼ÒĞĞ¶¯µÄÎ»ÖÃ 
-	int myx,myy;//-----------Íæ¼ÒÎ»ÖÃ 
-	int Life;//--------------Íæ¼ÒÉúÃü
-	int MaxLife;//-----------Íæ¼Ò×î´óÉúÃü 
-	std::string MapName;//---µ±Ç°µØÍ¼ĞòºÅ 
+struct SP{//StructPlayer çš„ç¼©å†™   ç©å®¶ä¿¡æ¯ 
+	int LastX,LastY;//-------ç©å®¶ä¸Šæ¬¡çš„ä½ç½® 
+	int NextX,NextY;//-------ç©å®¶è¡ŒåŠ¨çš„ä½ç½® 
+	int myx,myy;//-----------ç©å®¶ä½ç½® 
+	int Life;//--------------ç©å®¶ç”Ÿå‘½
+	int MaxLife;//-----------ç©å®¶æœ€å¤§ç”Ÿå‘½ 
+	std::string MapName;//---å½“å‰åœ°å›¾åºå· 
 };
 SP Player;
 
-std::string ClsText;//ÇåÆÁstr 
+std::string ClsText;//æ¸…å±str 
 
 
-//µØÍ¼ÎÄ¼ş======================================================================
-//0."  "¿ÕÆø   1."##"Ç½   2."ÃÅ"ÃÅ   9."%%"ÏİÚå   10."µĞ"µĞÈË   11."ÈË"Ò»¸öÈË 
-struct SM {//StructMap µÄËõĞ´ µØÍ¼ĞÅÏ¢ 
-	int maxx, maxy;//-------µØÍ¼´óĞ¡ 
-	std::string wjname;//---ÎÄ¼şÃû×Ö 
-	std::string name;//-----µØÍ¼Ãû×Ö 
-	std::string Author = NullText;//µØÍ¼×÷Õß
+//åœ°å›¾æ–‡ä»¶======================================================================
+//0."  "ç©ºæ°”   1."##"å¢™   2."é—¨"é—¨   9."%%"é™·é˜±   10."æ•Œ"æ•Œäºº   11."äºº"ä¸€ä¸ªäºº 
+struct SM {//StructMap çš„ç¼©å†™ åœ°å›¾ä¿¡æ¯ 
+	int maxx, maxy;//-------åœ°å›¾å¤§å° 
+	std::string wjname;//---æ–‡ä»¶åå­— 
+	std::string name;//-----åœ°å›¾åå­— 
+	std::string Author = NullText;//åœ°å›¾ä½œè€…
 
-	int Data[MapMaxSize][MapMaxSize];//µØÍ¼Êı¾İ
-	//	int SJData[20][40];//¾ÉÊÂ¼ş´æ´¢¸ñÊ½
-	struct SJData {//ÊÂ¼şÊı¾İ
-		int SJNum;//ÌØÊâÊÂ¼şÊıÁ¿ 
-		int CSNum;//´«ËÍÊÂ¼şÊıÁ¿ 
-		int DHNum;//¶Ô»°ÊÂ¼şÊıÁ¿ 
-		struct Data {//=====ÊÂ¼ş²ÎÊı 
-			int X, Y;//´¥·¢Î»ÖÃ 
-			int Type;//ÊÂ¼şÀàĞÍ 
-			int Hand;//ÊÂ¼şĞòºÅ 
+	int Data[MapMaxSize][MapMaxSize];//åœ°å›¾æ•°æ®
+	//	int SJData[20][40];//æ—§äº‹ä»¶å­˜å‚¨æ ¼å¼
+	struct SJData {//äº‹ä»¶æ•°æ®
+		int SJNum;//ç‰¹æ®Šäº‹ä»¶æ•°é‡ 
+		int CSNum;//ä¼ é€äº‹ä»¶æ•°é‡ 
+		int DHNum;//å¯¹è¯äº‹ä»¶æ•°é‡ 
+		struct Data {//=====äº‹ä»¶å‚æ•° 
+			int X, Y;//è§¦å‘ä½ç½® 
+			int Type;//äº‹ä»¶ç±»å‹ 
+			int Hand;//äº‹ä»¶åºå· 
 		}Data[100];
-		struct CSData {//=====´«ËÍÊı¾İ 
-			int X, Y;//´«ËÍÄ¿±êÎ»ÖÃ
-			std::string MapName;//Ä¿±êÃû×Ö
+		struct CSData {//=====ä¼ é€æ•°æ® 
+			int X, Y;//ä¼ é€ç›®æ ‡ä½ç½®
+			std::string MapName;//ç›®æ ‡åå­—
 		}CSData[100];
-		struct DHData {//=====¶Ô»°Êı¾İ 
-			std::string ObjectName;//¶Ô»°ÕßÃû³Æ 
-			int DHNum;//¶Ô»°ÊıÁ¿ 
-			struct DH {//¶Ô»° 
-				std::string Text;//¶Ô»°ÄÚÈİ
-				int HDNum;//»Ø´ğÊıÁ¿ 
-				struct HD {//»Ø´ğ 
-					std::string Text;//»Ø´ğÄÚÈİ
-					int JG;//»Ø´ğ½á¹û 
+		struct DHData {//=====å¯¹è¯æ•°æ® 
+			std::string ObjectName;//å¯¹è¯è€…åç§° 
+			int DHNum;//å¯¹è¯æ•°é‡ 
+			struct DH {//å¯¹è¯ 
+				std::string Text;//å¯¹è¯å†…å®¹
+				int HDNum;//å›ç­”æ•°é‡ 
+				struct HD {//å›ç­” 
+					std::string Text;//å›ç­”å†…å®¹
+					int JG;//å›ç­”ç»“æœ 
 				}HD[8];
 			}DH[50];
 		}DHData[100];
@@ -95,52 +99,54 @@ struct SM {//StructMap µÄËõĞ´ µØÍ¼ĞÅÏ¢
 }Map;
 
 
-std::string MapName[201];//µØÍ¼ÁĞ±í
-int MapNum;//µØÍ¼ÁĞ±í µÄµØÍ¼ÊıÁ¿
+std::string MapName[201];//åœ°å›¾åˆ—è¡¨
+int MapNum;//åœ°å›¾åˆ—è¡¨ çš„åœ°å›¾æ•°é‡
 
-std::string ErrorText;//´íÎóĞÅÏ¢
-int ErrorNum;//´íÎóÊıÁ¿
+std::string ErrorText;//é”™è¯¯ä¿¡æ¯
+int ErrorNum;//é”™è¯¯æ•°é‡
 
-//======================================================================µØÍ¼ÎÄ¼ş
+std::string WarnText;//è­¦å‘Šä¿¡æ¯
+int WarnNum;//è­¦å‘Šæ•°é‡
+
+//======================================================================åœ°å›¾æ–‡ä»¶
 
 
 
 
-
-int ct(int x, int y, std::string str){//<-------------------------------------------------------Ö¸¶¨´òÓ¡ Ôö¼ÓFPS 
-    COORD zb;
-    zb.X = x;
-    zb.Y = y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), zb);
-    std::cout << str;
-    std::cout.flush(); 
-    return 0;
+//===========
+void ct(int x, int y, std::string str){//<-------------------------------------------------------æŒ‡å®šæ‰“å° å¢åŠ FPS 
+    COORD zb;zb.X = x;zb.Y = y;//å®šä¹‰åæ ‡
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), zb);//è®¾ç½®å…‰æ ‡ä½ç½®
+    std::cout << str;//å®šä¹‰æ–‡æœ¬
+    std::cout.flush(); //ä½¿æ–‡æœ¬ç«‹å³æ˜¾ç¤º
 }
-
-std::string wstring_string(std::wstring wstr){//------------------------------------------------ wstring --> string-8   (À´×ÔAI)
+//==========
+//==========
+//==========
+std::string wstring_string(std::wstring wstr){//------------------------------------------------ wstring --> string-8   (æ¥è‡ªAI)
 	int len = WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), -1, NULL, 0, NULL, NULL);
     std::string strr(len, 0);
 	WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), -1, &strr[0], len, NULL, NULL);
-	strr.pop_back();//È¥³ı×îºóµÄÒ»¸ö×Ö·û   ÔÚ´ËÊÇ ' '<---¿Õ¸ñ 
+	strr.pop_back();//å»é™¤æœ€åçš„ä¸€ä¸ªå­—ç¬¦   åœ¨æ­¤æ˜¯ ' '<---ç©ºæ ¼ 
 	return strr;
 }
 
-std::string to_utf8(const std::string& ansi) {//------------------------------------------------ String --> UFT-8   (À´×ÔAI)
-	// 1. ANSI ¡ú UTF?16 (»ñÈ¡ËùĞè³¤¶È£¬²»º¬ null)
+std::string to_utf8(const std::string& ansi) {//------------------------------------------------ String --> UFT-8   (æ¥è‡ªAI)
+	// 1. ANSI â†’ UTF?16 (è·å–æ‰€éœ€é•¿åº¦ï¼Œä¸å« null)
 	int wlen = MultiByteToWideChar(CP_ACP, 0, ansi.c_str(), ansi.size(), nullptr, 0);
 	if (wlen == 0) return "";
 	std::wstring wstr(wlen, L'\0');
 	MultiByteToWideChar(CP_ACP, 0, ansi.c_str(), ansi.size(), &wstr[0], wlen);
 
-	// 2. UTF?16 ¡ú UTF?8 (»ñÈ¡ËùĞè³¤¶È£¬²»º¬ null)
+	// 2. UTF?16 â†’ UTF?8 (è·å–æ‰€éœ€é•¿åº¦ï¼Œä¸å« null)
 	int ulen = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), nullptr, 0, nullptr, nullptr);
 	if (ulen == 0) return "";
 	std::string utf8(ulen, '\0');
 	WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), &utf8[0], ulen, nullptr, nullptr);
-	return utf8;   // utf8.size() == ulen£¬ÎŞ¶àÓà null
+	return utf8;   // utf8.size() == ulenï¼Œæ— å¤šä½™ null
 }
 
-std::string to_Ansi(const std::string& utf8Str) {//------------------------------------------------ UFT-8 --> String   (À´×ÔAI)
+std::string to_Ansi(const std::string& utf8Str) {//------------------------------------------------ UFT-8 --> String   (æ¥è‡ªAI)
 	if (utf8Str.empty()) return {};
 
 	// 1. UTF-8 -> UTF-16
@@ -155,419 +161,416 @@ std::string to_Ansi(const std::string& utf8Str) {//-----------------------------
 	std::string ansiStr(ansiLen, '\0');
 	WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), -1, &ansiStr[0], ansiLen, nullptr, nullptr);
 
-	// ·µ»ØÊ±È¥µôÄ©Î²µÄ '\0'
+	// è¿”å›æ—¶å»æ‰æœ«å°¾çš„ '\0'
 	return ansiStr.substr(0, ansiLen - 1);
 }
-
-void Debug(std::string str){//<---------------------------------------------------------ÈÕÖ¾
-	
-	if(str == "sss"){//Çå¿ÕÈÕÖ¾ 
-    	std::ofstream outfile(DebugWay);
-		outfile<<"==================================ÈÕÖ¾==================================";
-		if(!BoolDebug) outfile<<"\nÈÕÖ¾ÒÔ¼ÇÂ¼¹Ø±Õ ¿ÉÒÔÔÚÉèÖÃÖĞ´ò¿ª´Ë¹¦ÄÜ";
-		return;
+//==========
+//==========
+//==========
+void Debug(std::string str){//<---------------------------------------------------------æ—¥å¿—
+	if(!BoolDebug)return;//å¦‚æœæ—¥å¿—è®°å½•å…³é—­ å°±é€€å‡ºå‡½æ•° 
+	if(str == "sss"){//æ¸…ç©ºæ—¥å¿— 
+    	std::ofstream DubugOut(DebugWay);//æ‰“å¼€æ–‡ä»¶
+		DubugOut <<"==================================æ—¥å¿—==================================\n";
+		if(!BoolDebug) DubugOut <<"\næ—¥å¿—ä»¥è®°å½•å…³é—­ å¯ä»¥åœ¨è®¾ç½®ä¸­æ‰“å¼€æ­¤åŠŸèƒ½\n";
+		return;//é€€å‡º
 	}
-	
-	if(!BoolDebug)return;//Èç¹ûÈÕÖ¾¼ÇÂ¼¹Ø±Õ ¾ÍÍË³öº¯Êı 
-	
-	std::string strr; 
-	strr+="\n";
-    
-    //Ğ´Èë³ÌĞòÔËĞĞÊ±¼ä 
-    strr+="[";
-	double NowTime = clock();
-	strr += std::to_string(NowTime/1000); 
-    strr+="] ";
-    
-    //Ğ´ÈëDebug 
-    strr+=str;
-    std::ofstream outfile(DebugWay,std::ios::app);
-    outfile<<strr;//Ğ´ÈëÎÄ¼ş
+	std::string strr; //å®šä¹‰æ–‡æœ¬
+	strr += "\n";//å†™å…¥æ¢è¡Œ
+	double NowTime = clock();//è·å–ç¨‹åºè¿è¡Œæ—¶é—´
+	strr += "[" + std::to_string(NowTime / 1000) + "] ";//å†™å…¥æ—¶é—´
+    strr+=str;//å†™å…¥Debug 
+    std::ofstream DubugOut(DebugWay,std::ios::app);
+	DubugOut<<strr;//å†™å…¥æ–‡ä»¶
 }
 
-void cls(){//<-------------------------------------------------------------------------------ÇåÆÁº¯Êı  "¼«´ó"µÄ¼õÉÙÁËÆÁÄ»Ë¢ĞÂÊ±µÄÉÁË¸ 
-	ct(0, 0, ClsText);
-	ct(0, 0, "");
+void DebugError(std::string str) {//<---------------------------------------------------------é”™è¯¯æ—¥å¿—
+	if (!BoolDebug)return;//å¦‚æœæ—¥å¿—è®°å½•å…³é—­ å°±é€€å‡ºå‡½æ•° 
+	if (str == "sss") {//æ¸…ç©ºé”™è¯¯æ—¥å¿— 
+		std::ofstream DubugOut(ErrorWay);//æ‰“å¼€æ–‡ä»¶
+		DubugOut << "==================================é”™è¯¯æ—¥å¿—==================================";
+		if (!BoolDebug) DubugOut << "\né”™è¯¯æ—¥å¿—ä»¥è®°å½•å…³é—­ å¯ä»¥åœ¨è®¾ç½®ä¸­æ‰“å¼€æ­¤åŠŸèƒ½";
+		return;//é€€å‡º
+	}
+	std::string strr;//å®šä¹‰æ–‡æœ¬
+	strr += "\n";//å†™å…¥æ¢è¡Œ
+	double NowTime = clock();//è·å–ç¨‹åºè¿è¡Œæ—¶é—´
+	strr += "[" + std::to_string(NowTime / 1000) + "] ";//å†™å…¥æ—¶é—´
+	strr += str;//å†™å…¥DebugError
+	std::ofstream DubugOut(ErrorWay, std::ios::app);//æ‰“å¼€æ–‡ä»¶
+	DubugOut << strr;//å†™å…¥æ–‡ä»¶
 }
 
-void CDW(const std::wstring& str){//<-------------------------------------------------------´´½¨ÎÄ¼ş¼Ğ 
-    CreateDirectoryW(str.c_str(),NULL);
+void DebugWarn(std::string str) {//<---------------------------------------------------------è­¦å‘Šæ—¥å¿—
+	if (!BoolDebug)return;//å¦‚æœæ—¥å¿—è®°å½•å…³é—­ å°±é€€å‡ºå‡½æ•° 
+	if (str == "sss") {//æ¸…ç©ºè­¦å‘Šæ—¥å¿— 
+		std::ofstream DubugOut(WarnWay);//æ‰“å¼€æ–‡ä»¶
+		DubugOut << "==================================è­¦å‘Šæ—¥å¿—==================================";
+		if (!BoolDebug) DubugOut << "\nè­¦å‘Šæ—¥å¿—ä»¥è®°å½•å…³é—­ å¯ä»¥åœ¨è®¾ç½®ä¸­æ‰“å¼€æ­¤åŠŸèƒ½";
+		return;//é€€å‡º
+	}
+	std::string strr;//å®šä¹‰æ–‡æœ¬
+	strr += "\n";////å†™å…¥æ¢è¡Œ
+	double NowTime = clock();//è·å–ç¨‹åºè¿è¡Œæ—¶é—´
+	strr += "[" + std::to_string(NowTime / 1000) + "] ";//å†™å…¥æ—¶é—´
+	strr += str;//å†™å…¥DebugWarn
+	std::ofstream DubugOut(WarnWay, std::ios::app);//æ‰“å¼€æ–‡ä»¶
+	DubugOut << strr;//å†™å…¥æ–‡ä»¶
+}
+//==========
+//==========
+//==========
+void cls(){//<-------------------------------------------------------------------------------æ¸…å±å‡½æ•°  "æå¤§"çš„å‡å°‘äº†å±å¹•åˆ·æ–°æ—¶çš„é—ªçƒ 
+	ct(0, 0, ClsText);//æ‰“å°å¤§é‡ç©ºæ ¼
+	ct(0, 0, "");//å®šä½å…³é—­è‡³å·¦ä¸Šè§’
+}
+//==========
+//==========
+//==========
+void CDW(const std::wstring& str){//<-------------------------------------------------------åˆ›å»ºæ–‡ä»¶å¤¹ 
+    CreateDirectoryW(str.c_str(),NULL);//åˆ›å»ºæ–‡ä»¶å¤¹
 }
 
-bool FFFW(const std::wstring& str, const std::string FindMapName){//<-------------------------------------------------------»ñÈ¡ÎÄ¼ş 
+bool FFFW(const std::wstring& str, const std::string FindMapName){//<-------------------------------------------------------è·å–æ–‡ä»¶ 
 	bool Find = true;
-	Debug("ËÑË÷µØÍ¼ÎÄ¼ş==="); 
-	WIN32_FIND_DATAW num;//´´½¨½á¹¹ÌåÒÔÔİÊ±±£´æµØÍ¼Ãû³Æ 
-	HANDLE Name = FindFirstFileW((str + L"\\*").c_str(), &num);// À´×ÔAI »ñÈ¡Ãû³Æ
-	int i = 0;//¶¨Òå¼ÇºÅ 
-	while(FindNextFileW(Name,&num)){//ÊÇ·ñ»¹ÓĞÎÄ¼ş 
-		std::string strr = wstring_string(num.cFileName);//»ñÈ¡Ãû³Æ
-		MapName[i] = strr;//½«µØÍ¼Ãû³ÆĞ´ÈëÊı×é
+	Debug("æœç´¢åœ°å›¾æ–‡ä»¶==="); 
+	WIN32_FIND_DATAW num;//åˆ›å»ºç»“æ„ä½“ä»¥æš‚æ—¶ä¿å­˜åœ°å›¾åç§° 
+	HANDLE Name = FindFirstFileW((str + L"\\*").c_str(), &num);// æ¥è‡ªAI è·å–åç§°
+	int i = 0;//å®šä¹‰è®°å· 
+	while(FindNextFileW(Name,&num)){//æ˜¯å¦è¿˜æœ‰æ–‡ä»¶ 
+		std::string strr = wstring_string(num.cFileName);//è·å–åç§°
+		MapName[i] = strr;//å°†åœ°å›¾åç§°å†™å…¥æ•°ç»„
 		if (Find && FindMapName == strr) Find = false;
-		Debug("µÚ"+std::to_string(i)+"¸öµØÍ¼ÎÄ¼ş:"+strr);
-		i++;//¼ÇºÅ¼ÓÒ» 
+		Debug("ç¬¬"+std::to_string(i)+"ä¸ªåœ°å›¾æ–‡ä»¶:"+strr);
+		i++;//è®°å·åŠ ä¸€ 
 	}
-    MapNum = i-1;//¼ÇÂ¼µØÍ¼ÊıÁ¿ 
-    
-    FindClose(Name);//½áÊøÑ°ÕÒ 
-    Debug("ËÑË÷ÁË"+std::to_string(MapNum)+"¸öÎÄ¼ş");
-    Debug("===ËÑË÷µØÍ¼ÎÄ¼ş");
+    MapNum = i-1;//è®°å½•åœ°å›¾æ•°é‡ 
+    FindClose(Name);//ç»“æŸå¯»æ‰¾ 
+    Debug("æœç´¢äº†"+std::to_string(MapNum)+"ä¸ªæ–‡ä»¶");
+    Debug("===æœç´¢åœ°å›¾æ–‡ä»¶");
 	return !Find;
 }
-
-void Error(const std::string Text, const std::string Type) {;//<-------------------------------------------------------------------------´íÎóÏÔÊ¾
-	if (Type == "W") {
-		Debug("·¢Éú´íÎó " + std::to_string(ErrorNum) + ". " + Text);
-		ErrorText +="| " + std::to_string(ErrorNum) + ". " + Text + "\n";
-		ErrorNum++;
+//==========
+//==========
+//==========
+void Error(const std::string Text, const std::string Type) {
+	;//<-------------------------------------------------------------------------é”™è¯¯æ˜¾ç¤º
+	if (Type == "W") {//å†™å…¥é”™è¯¯
+		DebugError("å‘ç”Ÿé”™è¯¯ " + std::to_string(ErrorNum) + ". " + Text);
+		ErrorText += "| " + std::to_string(ErrorNum) + ". " + Text + "\n";
+		ErrorNum++;//é”™è¯¯æ•°é‡åŠ ä¸€
 	}
-	else if (Type == "R") {
+	else if (Type == "R") {//æ˜¾ç¤ºé”™è¯¯
 		bool BoolError = false;
 		while (1) {
 			std::string str;
-			str += "·¢Éú´íÎó\n";
-			str += "·¢ÏÖ´íÎóÊıÁ¿: " + std::to_string(ErrorNum) + "\n\n";
-			if (BoolError)str += "´íÎóĞÅÏ¢:\n" + ErrorText + "\n";
-			str += "ÇëÁªÏµ´´×÷ÕßĞŞ¸´\n";
+			str += "å‘ç”Ÿé”™è¯¯\n";
+			str += "å‘ç°é”™è¯¯æ•°é‡: " + std::to_string(ErrorNum) + "\n\n";
+			if (BoolError)str += "é”™è¯¯ä¿¡æ¯:\n" + ErrorText + "\n";
+			str += "è¯·è”ç³»åˆ›ä½œè€…ä¿®å¤\n";
 			str += "\n\n";
-			str += "¿Õ¸ñ.²é¿´ÏêÏ¸\n";
-			str += "r.·µ»Ø\n";
+			str += "ç©ºæ ¼.æŸ¥çœ‹è¯¦ç»†\n";
+			str += "r.è¿”å›\n";
 			cls();
 			ct(0, 0, str);
 			char input = _getch();
 			if (input == 'r' || input == 'R')break;
 			else if (input == ' ')BoolError = BoolError ? false : true;
 		}
+		Error("", "sss");
+	}
+	else if (Type == "sss") {//æ¸…ç©ºé”™è¯¯
+		Debug("å‘ç°é”™è¯¯æ•°:  " + ErrorNum);
+		DebugError("ç›®å‰å‘ç°é”™è¯¯æ•°:  " + ErrorNum);
+		DebugError("======================================================");
 		ErrorText = "";
 		ErrorNum = 0;
 	}
+	cls();//æ¸…å±
 }
 
-bool OpenJson(const std::string WJWay, const std::string WJName, nlohmann::json& jsin) {//<--------------------------------------------------------------´ò¿ªJSON ·ÖÎö
+void Warn(const std::string Text, const std::string Type) {//<-------------------------------------------------------------------------è­¦å‘Šæ˜¾ç¤º
+	if (Type == "W") {//å†™å…¥è­¦å‘Š
+		DebugWarn("å‘ç”Ÿè­¦å‘Š " + std::to_string(WarnNum) + ". " + Text);
+		WarnText += "| " + std::to_string(WarnNum) + ". " + Text + "\n";
+		WarnNum++;//è­¦å‘Šæ•°é‡åŠ ä¸€
+	}
+	else if (Type == "R") {//æ˜¾ç¤ºè­¦å‘Š
+		bool Bool = false;
+		while (1) {
+			std::string str;
+			str += "å‘ç”Ÿè­¦å‘Š\n";
+			str += "å‘ç°è­¦å‘Šæ•°é‡: " + std::to_string(WarnNum) + "\n\n";
+			if (Bool)str += "è­¦å‘Šä¿¡æ¯:\n" + WarnText + "\n";
+			str += "è¯·è”ç³»åˆ›ä½œè€…ä¿®å¤\n\n";
+			str += "è­¦å‘Šä¸å½±å“æ¸¸æˆè¿è¡Œ\n";
+			str += "\n\n";
+			str += "ç©ºæ ¼.æŸ¥çœ‹è¯¦ç»†\n";
+			str += "r.è¿”å›\n";
+			cls();
+			ct(0, 0, str);
+			char input = _getch();
+			if (input == 'r' || input == 'R')break;
+			else if (input == ' ')Bool = Bool ? false : true;
+		}
+	}
+	else if (Type == "sss") {//æ¸…ç©ºè­¦å‘Š
+		Debug("å‘ç°è­¦å‘Šæ•°:  " + WarnNum);
+		DebugWarn("ç›®å‰å‘ç°è­¦å‘Šæ•°:  " + WarnNum);
+		DebugWarn("======================================================");
+		WarnText = "";
+		WarnNum = 0;
+	}
+	cls();//æ¸…å±
+}
+//==========
+//==========
+//==========
+bool OpenJson(const std::string WJWay, const std::string WJName, nlohmann::json& jsin) {//<--------------------------------------------------------------æ‰“å¼€JSON åˆ†æ
 	std::ifstream Open(WJName);
-	if (!Open.is_open()) {//Èç¹ûÎÄ¼ş´ò¿ªÊ§°Ü
-		std::string T = FFFW(DataParent, WJName) ? "Î´Öª" : "Î´ÕÒµ½´ËÎÄ¼ş";
-		Error("ÎŞ·¨´ò¿ªÎÄ¼ş: " + WJName + " ´íÎóĞÅÏ¢: " + T, "W");
-		return false;//Êä³ö ¼Ù
+	if (!Open.is_open()) {//å¦‚æœæ–‡ä»¶æ‰“å¼€å¤±è´¥
+		std::string T = FFFW(DataParent, WJName) ? "æœªçŸ¥" : "æœªæ‰¾åˆ°æ­¤æ–‡ä»¶";
+		Error("æ— æ³•æ‰“å¼€æ–‡ä»¶: " + WJName + " é”™è¯¯ä¿¡æ¯: " + T, "W");
+		return false;//è¾“å‡º å‡
 	}
-	try {//Èç¹ûÃ»ÓĞ´íÎó
+	try {//å¦‚æœæ²¡æœ‰é”™è¯¯
 		Open >> jsin;
-		return true;//Êä³ö Õæ
+		return true;//è¾“å‡º çœŸ
 	}
-	catch (const nlohmann::json::parse_error& er) {//Èç¹ûÎŞ·¨½âÎö
-		Error("ÎŞ·¨½âÎöJSONÎÄ¼ş " + WJName + " ´íÎóĞÅÏ¢: JSONÎÄ¼ş¸ñÊ½´íÎó "+"´íÎóÎ»ÖÃ: " + std::to_string(er.byte), "W");
-		return false;//Êä³ö ¼Ù
+	catch (const nlohmann::json::parse_error& er) {//å¦‚æœæ— æ³•è§£æ
+		Error("æ— æ³•è§£æJSONæ–‡ä»¶ " + WJName + " é”™è¯¯ä¿¡æ¯: JSONæ–‡ä»¶æ ¼å¼é”™è¯¯ "+"é”™è¯¯ä½ç½®: " + std::to_string(er.byte), "W");
+		return false;//è¾“å‡º å‡
 	}
 	return false;
 }
 
-void czdata(std::string xz){//<--------------------------------------------------------------ÖØÖÃÊı¾İ 
+void czdata(std::string xz){//<--------------------------------------------------------------é‡ç½®æ•°æ® 
 	if(xz == "GD"){
-		Debug("ÖØÖÃÓÎÏ·Êı¾İ====");
-
+		Debug("é‡ç½®æ¸¸æˆæ•°æ®====");
 		Player.myx = 1;//X
 		Player.myy = 1;//Y
 		Player.LastX = 1;//LastX
 		Player.LastY = 1;//LastY
 		Player.NextX = 1;//NextX
 		Player.NextY = 1;//NextY
-		Player.Life = 100;//ÑªÌõ
-		Player.MaxLife = 100;//×î´óÑªÁ¿
+		Player.Life = 100;//è¡€æ¡
+		Player.MaxLife = 100;//æœ€å¤§è¡€é‡
 		
-		GameRunTime = 0;//ÓÎÏ·Ê±¿Ì
+		GameRunTime = 0;//æ¸¸æˆæ—¶åˆ»
 		
-		Player.MapName = BeginMap;//³õÊ¼µØÍ¼
+		Player.MapName = BeginMap;//åˆå§‹åœ°å›¾
 
-		Debug("====ÖØÖÃÓÎÏ·Êı¾İ");
+		Debug("====é‡ç½®æ¸¸æˆæ•°æ®");
 	}else if(xz == "SD"){
 		
 	}
 }
 
-bool GameMapData(std::string mapname){//<---------------------------------------------¶ÁÈ¡µØÍ¼ÎÄ¼ş 
-	Debug("¶ÁÈ¡µØÍ¼=====");
-	Debug("ÎÄ¼şÃû³Æ:"+mapname); 
-	
-	//std::string mapway = wstring_string(MapDataParent)+ "/" + mapname;//¼ÆËãµØÍ¼Â·¾¶ 
-	//Debug("µØÍ¼Â·¾¶:"+mapway); 
-	//std::ifstream PFMapData(mapway);
-	//
-	//PFMapData>>Map.Name;//¶ÁÈ¡µØÍ¼Ãû×Ö
-	//Debug("µØÍ¼Ãû³Æ:"+Map.Name);
-	//
-	//PFMapData>>Map.MaxX>>Map.MaxY;//¶ÁÈ¡µØÍ¼´óĞ¡ 
-	//for(int i=0;i<Map.MaxY;i++){//¶ÁÈ¡µØÍ¼Êı¾İ 
-	//	for(int j=0;j<Map.MaxX;j++){
-	//		PFMapData>>Map.Data[i][j];
-	//	}
-	//}
-	//
-	//int num;
-	//
-	//PFMapData>>num;//¶ÁÈ¡µØÍ¼ÌØÊâÊÂ¼şÊıÁ¿ 
-	//Debug("ÌØÊâÊÂ¼ş¸öÊı:"+std::to_string(num));
-	//Map.SjNum = num;//¶ÁÈ¡µØÍ¼ÌØÊâÊÂ¼şÊıÁ¿ 
-	//for(int i=0;i<num;i++){
-	//	PFMapData>>Map.TSSJ[i][0]>>Map.TSSJ[i][1];//X Y
-	//	PFMapData>>Map.TSSJ[i][2];//ÊÂ¼şÀàĞÍ
-	//	if(Map.TSSJ[i][2] == 1){//1===´«ËÍ 
-	//		PFMapData>>Map.TSSJ[i][3]; 
-	//		PFMapData>>Map.TSSJ[i][4]>>Map.TSSJ[i][5]; 
-	//	}else if(Map.TSSJ[i][2] == 2){//2===¶Ô»° 
-	//		PFMapData>>Map.TSSJ[i][3];//¶Ô»°ÈËµÄÃû×Ö
-	//		int dhnum;//¶Ô»°ÊıÁ¿
-	//		PFMapData>>dhnum;//¶Ô»°ÊıÁ¿
-	//		Map.TSSJ[i][4] = dhnum;//¶Ô»°ÊıÁ¿
-	//		int Hand = 5;
-	//		for(int k=1;k<=dhnum;k++){
-	//			PFMapData>>Map.TSSJ[i][Hand];//¶Ô»°ÄÚÈİ 
-	//			Hand++;
-	//			int hdnum;//»Ø´ğÊıÁ¿ 
-	//			PFMapData>>hdnum;//»Ø´ğÊıÁ¿ 
-	//			Map.TSSJ[i][Hand] = hdnum;//»Ø´ğÊıÁ¿ 
-	//			Hand++;
-	//			for(int j=1;j<=hdnum;j++){
-	//				PFMapData>>Map.TSSJ[i][Hand];//»Ø´ğÄÚÈİ
-	//				Hand++;
-	//				PFMapData>>Map.TSSJ[i][Hand];//´Ë»Ø´ğ½á¹û 
-	//				Hand++;
-	//			}
-	//		}
-	//	}
-	//}
-	//
-	//int strnum;
-	//PFMapData>>strnum;//»ñÈ¡µØÍ¼ÎÄ±¾ÊıÁ¿
-	//for(int i=0;i<strnum;i++){//¶ÁÈ¡µØÍ¼ÎÄ±¾
-	//	PFMapData>>Map.Text[i];
-	//}
-	//
-
+bool GameMapData(std::string mapname){//<---------------------------------------------è¯»å–åœ°å›¾æ–‡ä»¶ 
+	Debug("è¯»å–åœ°å›¾=====");
+	Debug("æ–‡ä»¶åç§°:"+mapname); 
 	//json
-	std::string mapway = wstring_string(DataParent) + "/" + mapname;//¼ÆËãµØÍ¼Â·¾¶ 
-	Debug("ÎÄ¼şÂ·¾¶: " + mapway);
+	std::string mapway = wstring_string(DataParent) + "/" + mapname;//è®¡ç®—åœ°å›¾è·¯å¾„ 
+	Debug("æ–‡ä»¶è·¯å¾„: " + mapway);
 	nlohmann::json js;
 
-	if (!OpenJson(mapname, mapway, js)) {//¶ÁÈ¡µØÍ¼ÎÄ¼ş
+	if (!OpenJson(mapname, mapway, js)) {//è¯»å–åœ°å›¾æ–‡ä»¶
 		Error("", "R");
 		return false;
 	}
+	if (js.contains("name"))Map.name = to_Ansi(js["name"]); else Map.name = NullText;//åœ°å›¾åç§°
+	if (js.contains("author"))Map.Author = to_Ansi(js["author"]); else Map.Author = NullText;//ä½œè€…åç§°
+	if (js.contains("SizeX"))Map.maxx = js["SizeX"]; else Error("åœ°å›¾æ–‡ä»¶: " + mapway + " ç¼ºå¤±æ•°æ® SizeX", "W");//åœ°å›¾å°ºå¯¸
+	if (js.contains("SizeY"))Map.maxy = js["SizeY"]; else Error("åœ°å›¾æ–‡ä»¶: " + mapway + " ç¼ºå¤±æ•°æ® SizeY", "W");//åœ°å›¾å°ºå¯¸
 	
-	if (js.contains("name"))Map.name = to_Ansi(js["name"]); else Map.name = NullText;//µØÍ¼Ãû³Æ
-	if (js.contains("author"))Map.Author = to_Ansi(js["author"]); else Map.Author = NullText;//×÷ÕßÃû³Æ
-	if (js.contains("SizeX"))Map.maxx = js["SizeX"]; else Error("µØÍ¼ÎÄ¼ş: " + mapway + " È±Ê§Êı¾İ SizeX", "W");//µØÍ¼³ß´ç
-	if (js.contains("SizeY"))Map.maxy = js["SizeY"]; else Error("µØÍ¼ÎÄ¼ş: " + mapway + " È±Ê§Êı¾İ SizeY", "W");//µØÍ¼³ß´ç
-	
-	if (js.contains("MapData")) {//µØÍ¼Êı¾İ
+	if (js.contains("MapData")) {//åœ°å›¾æ•°æ®
 		auto MapData = js["MapData"];
-		if (MapData.size() >= Map.maxy) {//¼ì²âÊı¾İÊÇ·ñÍêÕû Y
+		if (MapData.size() >= Map.maxy) {//æ£€æµ‹æ•°æ®æ˜¯å¦å®Œæ•´ Y
 			for (int i = 0; i < Map.maxy; i++) {
-				if (MapData[i].size() >= Map.maxx) {//¼ì²âÊı¾İÊÇ·ñÍêÕû X
+				if (MapData[i].size() >= Map.maxx) {//æ£€æµ‹æ•°æ®æ˜¯å¦å®Œæ•´ X
 					for (int j = 0; j < Map.maxx; j++) {
 						Map.Data[i][j] = MapData[i][j];
 					}
+					if (MapData[i].size() > Map.maxx) Warn("åœ°å›¾æ–‡ä»¶: " + mapway + " åœ°å›¾æ•°æ®ä¸å°ºå¯¸ä¸ç¬¦ ç¬¬" + std::to_string(i) + "è¡Œ SizeX " + std::to_string(Map.maxx) + "   å®é™…æœ‰ " + std::to_string(MapData[i].size()), "W");//è­¦å‘Š æ•°æ®è¿‡å¤šX
 				}
-				else Error("µØÍ¼ÎÄ¼ş: " + mapway + " µØÍ¼Êı¾İ²¿·ÖÈ±Ê§ µÚ" + std::to_string(i) + "ĞĞ SizeX " + std::to_string(Map.maxy) + "   Êµ¼ÊÖ»ÓĞ " + std::to_string(MapData[i].size()), "W");
+				else Error("åœ°å›¾æ–‡ä»¶: " + mapway + " åœ°å›¾æ•°æ®éƒ¨åˆ†ç¼ºå¤± ç¬¬" + std::to_string(i) + "è¡Œ SizeX " + std::to_string(Map.maxx) + "   å®é™…åªæœ‰ " + std::to_string(MapData[i].size()), "W");//é”™è¯¯ æ•°æ®ç¼ºå¤±X
 			}
+			if(MapData.size() > Map.maxy) Warn("åœ°å›¾æ–‡ä»¶: " + mapway + " åœ°å›¾æ•°æ®ä¸å°ºå¯¸ä¸ç¬¦ SizeY " + std::to_string(Map.maxy) + "   å®é™…æœ‰ " + std::to_string(MapData.size()), "W");//è­¦å‘Š æ•°æ®è¿‡å¤šY
 		}
-		else Error("µØÍ¼ÎÄ¼ş: " + mapway + " µØÍ¼Êı¾İ²¿·ÖYÈ±Ê§ SizeY " + std::to_string(Map.maxy) + "   Êµ¼ÊÖ»ÓĞ " + std::to_string(MapData.size()), "W");
+		else Error("åœ°å›¾æ–‡ä»¶: " + mapway + " åœ°å›¾æ•°æ®éƒ¨åˆ†Yç¼ºå¤± SizeY " + std::to_string(Map.maxy) + "   å®é™…åªæœ‰ " + std::to_string(MapData.size()), "W");//é”™è¯¯ æ•°æ®ç¼ºå¤±Y
 	}
-	else Error("µØÍ¼ÎÄ¼ş: " + mapway + " È±Ê§Êı¾İ MapData", "W");
+	else Error("åœ°å›¾æ–‡ä»¶: " + mapway + " ç¼ºå¤±æ•°æ® MapData", "W");//é”™è¯¯ æ•°æ®ç¼ºå¤± MapData
 
-	if (!js.contains("SJData"))Error("µØÍ¼ÎÄ¼ş: " + mapway + " È±Ê§Êı¾İ SJData", "W");//¼ü SJData
-	if (js["SJData"].contains("sjnum"))Map.SJData.SJNum = js["SJData"]["sjnum"]; else Error("µØÍ¼ÎÄ¼ş: " + mapway + " È±Ê§Êı¾İ SJData - sjnum", "W");//ÊÂ¼şÊıÁ¿
+	if (!js.contains("SJData"))Error("åœ°å›¾æ–‡ä»¶: " + mapway + " ç¼ºå¤±æ•°æ® SJData", "W");//é”® SJData
+	if (js["SJData"].contains("sjnum"))Map.SJData.SJNum = js["SJData"]["sjnum"]; else Error("åœ°å›¾æ–‡ä»¶: " + mapway + " ç¼ºå¤±æ•°æ® SJData - sjnum", "W");//äº‹ä»¶æ•°é‡
 	for (int i = 0; i < Map.SJData.SJNum; i++) {
-		std::string S1 = "SJ" + std::to_string(i);//---¶¨Òå
-		if (!js["SJData"].contains(S1)) {//¼ü SJData     SJi
-			Error("µØÍ¼ÎÄ¼ş: " + mapway + " È±Ê§Êı¾İ SJData - " + S1, "W");
-		}//²»´æÔÚ ---ÉÏ
-		else {//´æÔÚ ---ÏÂ
-			if (!js["SJData"][S1].contains("x")) Error("µØÍ¼ÎÄ¼ş: " + mapway + " È±Ê§Êı¾İ SJData - " + S1 + " - x", "W");
-			else Map.SJData.Data[i].X = js["SJData"][S1]["x"];//´¥·¢X
-			if (!js["SJData"][S1].contains("y")) Error("µØÍ¼ÎÄ¼ş: " + mapway + " È±Ê§Êı¾İ SJData - " + S1 + " - y", "W");
-			else Map.SJData.Data[i].Y = js["SJData"][S1]["y"];//´¥·¢Y
-			if (!js["SJData"][S1].contains("type")) Error("µØÍ¼ÎÄ¼ş: " + mapway + " È±Ê§Êı¾İ SJData - " + S1 + " - type", "W");
-			else {//ÊÂ¼şµÄÊı¾İ
-				Map.SJData.Data[i].Type = js["SJData"][S1]["type"];//ÊÂ¼şÀàĞÍ
-				if (Map.SJData.Data[i].Type == 1) {//´«ËÍÊÂ¼ş
-					if(!js["SJData"][S1].contains("next")) Error("µØÍ¼ÎÄ¼ş: " + mapway + " È±Ê§Êı¾İ SJData - " + S1 + " - next", "W");
-					else Map.SJData.CSData[Map.SJData.CSNum].MapName = to_Ansi(js["SJData"][S1]["next"]);//´«ËÍµÄµØÍ¼Ãû×Ö
-					if (!js["SJData"][S1].contains("nextX")) Error("µØÍ¼ÎÄ¼ş: " + mapway + " È±Ê§Êı¾İ SJData - " + S1 + " - nextX", "W");
-					else Map.SJData.CSData[Map.SJData.CSNum].X = js["SJData"][S1]["nextX"];//´«ËÍµÄ×ø±ê X
-					if (!js["SJData"][S1].contains("nextY")) Error("µØÍ¼ÎÄ¼ş: " + mapway + " È±Ê§Êı¾İ SJData - " + S1 + " - nextY", "W");
-					else Map.SJData.CSData[Map.SJData.CSNum].Y = js["SJData"][S1]["nextY"];//´«ËÍµÄ×ø±ê X
-					Map.SJData.Data[i].Hand = Map.SJData.CSNum;
-					Map.SJData.CSNum++;
+		std::string S1 = "SJ" + std::to_string(i);//---å®šä¹‰
+		if (!js["SJData"].contains(S1)) {//é”® SJData     SJi
+			Error("åœ°å›¾æ–‡ä»¶: " + mapway + " ç¼ºå¤±æ•°æ® SJData - " + S1, "W");
+		}//ä¸å­˜åœ¨ ---ä¸Š
+		else {//å­˜åœ¨ ---ä¸‹
+			if (!js["SJData"][S1].contains("x")) Error("åœ°å›¾æ–‡ä»¶: " + mapway + " ç¼ºå¤±æ•°æ® SJData - " + S1 + " - x", "W");
+			else Map.SJData.Data[i].X = js["SJData"][S1]["x"];//è§¦å‘X
+			if (!js["SJData"][S1].contains("y")) Error("åœ°å›¾æ–‡ä»¶: " + mapway + " ç¼ºå¤±æ•°æ® SJData - " + S1 + " - y", "W");
+			else Map.SJData.Data[i].Y = js["SJData"][S1]["y"];//è§¦å‘Y
+			if (!js["SJData"][S1].contains("type")) Error("åœ°å›¾æ–‡ä»¶: " + mapway + " ç¼ºå¤±æ•°æ® SJData - " + S1 + " - type", "W");
+			else {//äº‹ä»¶çš„æ•°æ®
+				Map.SJData.Data[i].Type = js["SJData"][S1]["type"];//äº‹ä»¶ç±»å‹
+				if (Map.SJData.Data[i].Type == 1) {//ä¼ é€äº‹ä»¶
+					if(!js["SJData"][S1].contains("next")) Error("åœ°å›¾æ–‡ä»¶: " + mapway + " ç¼ºå¤±æ•°æ® SJData - " + S1 + " - next", "W");
+					else Map.SJData.CSData[Map.SJData.CSNum].MapName = to_Ansi(js["SJData"][S1]["next"]);//ä¼ é€çš„åœ°å›¾åå­—
+					if (!js["SJData"][S1].contains("nextX")) Error("åœ°å›¾æ–‡ä»¶: " + mapway + " ç¼ºå¤±æ•°æ® SJData - " + S1 + " - nextX", "W");
+					else Map.SJData.CSData[Map.SJData.CSNum].X = js["SJData"][S1]["nextX"];//ä¼ é€çš„åæ ‡ X
+					if (!js["SJData"][S1].contains("nextY")) Error("åœ°å›¾æ–‡ä»¶: " + mapway + " ç¼ºå¤±æ•°æ® SJData - " + S1 + " - nextY", "W");
+					else Map.SJData.CSData[Map.SJData.CSNum].Y = js["SJData"][S1]["nextY"];//ä¼ é€çš„åæ ‡ X
+					Map.SJData.Data[i].Hand = Map.SJData.CSNum;//è·å–ä¼ é€åœ°å€
+					Map.SJData.CSNum++;//ä¼ é€äº‹ä»¶æ•°é‡åŠ ä¸€
 				}
-				else if (Map.SJData.Data[i].Type == 2) {//¶Ô»°ÊÂ¼ş
-					if(!js["SJData"][S1].contains("object")) Error("µØÍ¼ÎÄ¼ş: " + mapway + " È±Ê§Êı¾İ SJData - " + S1 + " - object", "W");
-					else Map.SJData.DHData[Map.SJData.DHNum].ObjectName = to_Ansi(js["SJData"][S1]["object"]);//¶Ô»°Õß
-					if (!js["SJData"][S1].contains("dhnum")) Error("µØÍ¼ÎÄ¼ş: " + mapway + " È±Ê§Êı¾İ SJData - " + S1 + " - dhnum", "W");
-					else {//¶Ô»°µÄÊı¾İ
-						Map.SJData.DHData[Map.SJData.DHNum].DHNum = js["SJData"][S1]["dhnum"];//¶Ô»°µÄÊıÁ¿
+				else if (Map.SJData.Data[i].Type == 2) {//å¯¹è¯äº‹ä»¶
+					if(!js["SJData"][S1].contains("object")) Error("åœ°å›¾æ–‡ä»¶: " + mapway + " ç¼ºå¤±æ•°æ® SJData - " + S1 + " - object", "W");
+					else Map.SJData.DHData[Map.SJData.DHNum].ObjectName = to_Ansi(js["SJData"][S1]["object"]);//å¯¹è¯è€…
+					if (!js["SJData"][S1].contains("dhnum")) Error("åœ°å›¾æ–‡ä»¶: " + mapway + " ç¼ºå¤±æ•°æ® SJData - " + S1 + " - dhnum", "W");
+					else {//å¯¹è¯çš„æ•°æ®
+						Map.SJData.DHData[Map.SJData.DHNum].DHNum = js["SJData"][S1]["dhnum"];//å¯¹è¯çš„æ•°é‡
 						for (int j = 0; j < Map.SJData.DHData[Map.SJData.DHNum].DHNum; j++) {
-							std::string D2 = "DH" + std::to_string(j);//---¶¨Òå
-							if (!js["SJData"][S1].contains(D2)) {//¼ü SJData     SJi - DHj
-								Error("µØÍ¼ÎÄ¼ş: " + mapway + " È±Ê§Êı¾İ SJData - " + S1 + " - " + D2, "W");
-							}//²»´æÔÚ ---ÉÏ
-							else {//´æÔÚ ---ÏÂ
-								if (!js["SJData"][S1][D2].contains("text")) Error("µØÍ¼ÎÄ¼ş: " + mapway + " È±Ê§Êı¾İ SJData - " + S1 + " - " + D2 + " - text", "W");
-								else Map.SJData.DHData[Map.SJData.DHNum].DH[j].Text = to_Ansi(js["SJData"][S1][D2]["text"]);//¶Ô»°ÄÚÈİ
-								if (!js["SJData"][S1][D2].contains("hdnum")) Error("µØÍ¼ÎÄ¼ş: " + mapway + " È±Ê§Êı¾İ SJData - " + S1 + " - " + D2 + " - hdnum", "W");
-								else {//´Ë¶Ô»° »Ø´ğµÄÊı¾İ
-									Map.SJData.DHData[Map.SJData.DHNum].DH[j].HDNum = js["SJData"][S1][D2]["hdnum"];//´Ë¶Ô»° »Ø´ğµÄÊıÁ¿
+							std::string D2 = "DH" + std::to_string(j);//---å®šä¹‰
+							if (!js["SJData"][S1].contains(D2)) {//é”® SJData     SJi - DHj
+								Error("åœ°å›¾æ–‡ä»¶: " + mapway + " ç¼ºå¤±æ•°æ® SJData - " + S1 + " - " + D2, "W");
+							}//ä¸å­˜åœ¨ ---ä¸Š
+							else {//å­˜åœ¨ ---ä¸‹
+								if (!js["SJData"][S1][D2].contains("text")) Error("åœ°å›¾æ–‡ä»¶: " + mapway + " ç¼ºå¤±æ•°æ® SJData - " + S1 + " - " + D2 + " - text", "W");
+								else Map.SJData.DHData[Map.SJData.DHNum].DH[j].Text = to_Ansi(js["SJData"][S1][D2]["text"]);//å¯¹è¯å†…å®¹
+								if (!js["SJData"][S1][D2].contains("hdnum")) Error("åœ°å›¾æ–‡ä»¶: " + mapway + " ç¼ºå¤±æ•°æ® SJData - " + S1 + " - " + D2 + " - hdnum", "W");
+								else {//æ­¤å¯¹è¯ å›ç­”çš„æ•°æ®
+									Map.SJData.DHData[Map.SJData.DHNum].DH[j].HDNum = js["SJData"][S1][D2]["hdnum"];//æ­¤å¯¹è¯ å›ç­”çš„æ•°é‡
 									for (int k = 0; k < Map.SJData.DHData[Map.SJData.DHNum].DH[j].HDNum; k++) {
-										std::string H3 = "HD" + std::to_string(k);//---¶¨Òå
-										if (!js["SJData"][S1][D2].contains(H3)) {//¼ü SJData     SJi - DHj - HDk
-											Error("µØÍ¼ÎÄ¼ş: " + mapway + " È±Ê§Êı¾İ SJData - " + S1 + " - " + D2 + " - " + H3, "W");
-										}//²»´æÔÚ ---ÉÏ
+										std::string H3 = "HD" + std::to_string(k);//---å®šä¹‰
+										if (!js["SJData"][S1][D2].contains(H3)) {//é”® SJData     SJi - DHj - HDk
+											Error("åœ°å›¾æ–‡ä»¶: " + mapway + " ç¼ºå¤±æ•°æ® SJData - " + S1 + " - " + D2 + " - " + H3, "W");
+										}//ä¸å­˜åœ¨ ---ä¸Š
 										else {
-											if (!js["SJData"][S1][D2][H3].contains("text")) Error("µØÍ¼ÎÄ¼ş: " + mapway + " È±Ê§Êı¾İ SJData - " + S1 + " - " + D2 + " - " + H3 + " - text", "W");
-											else Map.SJData.DHData[Map.SJData.DHNum].DH[j].HD[k].Text = to_Ansi(js["SJData"][S1][D2][H3]["text"]);//´Ë»Ø´ğµÄÄÚÈİ
-											if (!js["SJData"][S1][D2][H3].contains("effect")) Error("µØÍ¼ÎÄ¼ş: " + mapway + " È±Ê§Êı¾İ SJData - " + S1 + " - " + D2 + " - " + H3 + " - effect", "W");
-											else Map.SJData.DHData[Map.SJData.DHNum].DH[j].HD[k].JG = js["SJData"][S1][D2][H3]["effect"];//´Ë»Ø´ğµÄĞ§¹û/½á¹û
+											if (!js["SJData"][S1][D2][H3].contains("text")) Error("åœ°å›¾æ–‡ä»¶: " + mapway + " ç¼ºå¤±æ•°æ® SJData - " + S1 + " - " + D2 + " - " + H3 + " - text", "W");
+											else Map.SJData.DHData[Map.SJData.DHNum].DH[j].HD[k].Text = to_Ansi(js["SJData"][S1][D2][H3]["text"]);//æ­¤å›ç­”çš„å†…å®¹
+											if (!js["SJData"][S1][D2][H3].contains("effect")) Error("åœ°å›¾æ–‡ä»¶: " + mapway + " ç¼ºå¤±æ•°æ® SJData - " + S1 + " - " + D2 + " - " + H3 + " - effect", "W");
+											else Map.SJData.DHData[Map.SJData.DHNum].DH[j].HD[k].JG = js["SJData"][S1][D2][H3]["effect"];//æ­¤å›ç­”çš„æ•ˆæœ/ç»“æœ
 										}
 									}
 								}
 							}
 						}
 					}
-					Map.SJData.Data[i].Hand = Map.SJData.DHNum;
-					Map.SJData.DHNum++;
+					Map.SJData.Data[i].Hand = Map.SJData.DHNum;//è·å–å¯¹è¯åœ°å€
+					Map.SJData.DHNum++;//å¯¹è¯äº‹ä»¶æ•°é‡åŠ ä¸€
 				}
 			}
 		}
 	}
-
 	cls();
-	if (ErrorNum != 0) {
+	if (ErrorNum != 0) {//é”™è¯¯æ˜¾ç¤º
 		Error("", "R");
 		return false;
 	}
-	Debug("=====¶ÁÈ¡µØÍ¼");
+	if (WarnNum != 0) {
+		if (BoolWarn) {//è­¦å‘Šæ˜¾ç¤º
+			Warn("", "R");
+		}
+		Warn("", "sss");
+	}
+	Debug("=====è¯»å–åœ°å›¾");
 	return true;
 }
 
-void GameData(std::string xz, int num){//<-------------------------------------------±£´æ/¶ÁÈ¡ÓÎÏ·Êı¾İ 
-	if(xz == "GDW"){//GameData
-		Debug("±£´æÓÎÏ·Êı¾İ==========");
-		
-		//std::string str;
-		//
-		//str += std::to_string(num)+"\n";
-		////Player.MapHand myx   myy   Life   MaxLife
-		//str += Player.MapName+" "+std::to_string(Player.myx)+" "+std::to_string(Player.myy)+" "+std::to_string(Player.Life)+" "+std::to_string(Player.MaxLife)+"\n";
-		//str += std::to_string(GameRunTime)+"\n";
-		//
-		//std::ofstream PFR(GameDataWay);//Ğ´ÈëÎÄ¼ş
-		//PFR<<str;
-
+void GameData(std::string xz, int num){//<-------------------------------------------ä¿å­˜/è¯»å–æ¸¸æˆæ•°æ® 
+	if(xz == "GDW"){//GameData ====================
+		Debug("ä¿å­˜æ¸¸æˆæ•°æ®");
 		nlohmann::json js;
-		js["x"] = Player.myx;
+		js["x"] = Player.myx;//ä½ç½®
 		js["y"] = Player.myy;
 		js["lastx"] = Player.LastX;
 		js["lasty"] = Player.LastY;
 		js["nextx"] = Player.NextX;
 		js["nexty"] = Player.NextY;
-
-		js["life"] = Player.Life;
-		js["maxlife"] = Player.MaxLife;
-
-		js["mapname"] = to_utf8(Player.MapName);
-
-		js["gameruntime"] = GameRunTime;
-
-		std::ofstream outjs(GameDataWay);
-		outjs << js.dump(4);
-		outjs.close();
-		Debug("==========±£´æÓÎÏ·Êı¾İ");
-	}else if(xz == "GDR"){//GameData
-		
-		Debug("¶ÁÈ¡ÓÎÏ·Êı¾İ==========");
-		
-		std::ifstream jsin(GameDataWay);//ÓÃPFW±íÊ¾Debug.txtÎÄ¼ş 
-		if (jsin.is_open()) {
+		js["life"] = Player.Life;//ç”Ÿå‘½
+		js["maxlife"] = Player.MaxLife;//æœ€å¤§ç”Ÿå‘½
+		js["mapname"] = to_utf8(Player.MapName);//å½“å‰åœ°å›¾åå­—
+		js["gameruntime"] = GameRunTime;//æ¸¸æˆæ—¶åˆ»
+		std::ofstream outjs(GameDataWay);//æ‰“å¼€æ–‡ä»¶
+		outjs << js.dump(4);//å†™å…¥æ–‡ä»¶
+		outjs.close();//å…³é—­æ–‡ä»¶
+	}else if(xz == "GDR"){//GameData ====================
+		Debug("è¯»å–æ¸¸æˆæ•°æ®");
+		std::ifstream jsin(GameDataWay);//ç”¨PFWè¡¨ç¤ºDebug.txtæ–‡ä»¶ 
+		if (jsin.is_open()) {//å¦‚æœæ–‡ä»¶æ‰“å¼€æˆåŠŸ
 			nlohmann::json js;
 			jsin >> js;
-			Player.myx = js["x"];//»ñÈ¡Î»ÖÃ
+			Player.myx = js["x"];//è·å–ä½ç½®
 			Player.myy = js["y"];
 			Player.LastX = js["lastx"];
 			Player.LastY = js["lasty"];
 			Player.NextX = js["nextx"];
 			Player.NextY = js["nexty"];
-			Player.Life = js["life"];//»ñÈ¡ÉúÃü
+			Player.Life = js["life"];//è·å–ç”Ÿå‘½
 			Player.MaxLife = js["maxlife"];
-			Player.MapName = to_Ansi(js["mapname"]);//»ñÈ¡µØÍ¼ÎÄ¼şÃû
-			GameRunTime = js["gameruntime"];//»ñÈ¡ÓÎÏ·Ê±¿Ì
+			Player.MapName = to_Ansi(js["mapname"]);//è·å–åœ°å›¾æ–‡ä»¶å
+			GameRunTime = js["gameruntime"];//è·å–æ¸¸æˆæ—¶åˆ»
 			jsin.close();
 		}
-		else {
-			Debug("ÎÄ¼ş´ò¿ªÊ§°Ü: "+ GameDataWay);
-			czdata("GD");
-			GameData("GDW", 1);
+		else {//å¦‚æœæ–‡ä»¶æ‰“å¼€å¤±è´¥
+			Debug("æ–‡ä»¶æ‰“å¼€å¤±è´¥: "+ GameDataWay);
+			czdata("GD");//é‡ç½®æ•°æ®
+			GameData("GDW", 1);//ä¿å­˜æ•°æ®
 		}
-		//int num;
-		//PFW>>num;
-		//if(num){
-		//	PFW>>Player.MapName>>Player.myx >>Player.myy >>Player.Life >>Player.MaxLife;
-		//	PFW>>GameRunTime;
-		//}else{
-		//	czdata("GD");
-		//}
-		Debug("==========¶ÁÈ¡ÓÎÏ·Êı¾İ");
-
-		
-	}else if(xz == "SDW"){//SetData
-		
-		Debug("±£´æÉèÖÃÊı¾İ");
-		
-		std::string str;
-		
-		str += "1\n";
-		str += std::to_string(BoolDebug)+" "+std::to_string(BoolZbxs)+" "+std::to_string(BoolGameRunTime)+" "+std::to_string(BoolFPS)+" "+std::to_string(BoolMapMessage)+"\n";
-		str += std::to_string(FPSWeek)+"\n";
-		
-		std::ofstream PFR(SetDataWay);//Ğ´ÈëÎÄ¼ş
-		PFR<<str;
-		
-	}else if(xz == "SDR"){//SetData
-		
-		Debug("¶ÁÈ¡ÉèÖÃÊı¾İ");
-		
-		std::ifstream PFW(SetDataWay);//ÓÃfile±íÊ¾SetData.txtÎÄ¼ş 
-		
-		int num;
-		PFW>>num;
-		if(num){
-			PFW>>BoolDebug;
-			PFW>>BoolZbxs >>BoolGameRunTime >>BoolFPS >>BoolMapMessage;
-			PFW>>FPSWeek;
-		}else{
-			czdata("SD");
+	}else if(xz == "SDW"){//SetData ====================
+		Debug("ä¿å­˜è®¾ç½®æ•°æ®");
+		nlohmann::json js;
+		js["BoolDebug"]       = BoolDebug;
+		js["BoolZbxs"]        = BoolZbxs;
+		js["BoolGameRunTime"] = BoolGameRunTime;
+		js["BoolFPS"]         = BoolFPS;
+		js["BoolMapMessage"]  = BoolMapMessage;
+		js["BoolWarn"]        = BoolWarn;
+		js["FPSWeek"]         = FPSWeek;
+		std::ofstream outjs(SetDataWay);//æ‰“å¼€æ–‡ä»¶
+		outjs << js.dump(4);//å†™å…¥æ–‡ä»¶
+		outjs.close();//å…³é—­æ–‡ä»¶
+	}else if(xz == "SDR"){//SetData ====================
+		Debug("è¯»å–è®¾ç½®æ•°æ®");
+		std::ifstream jsin(SetDataWay);//ç”¨PFWè¡¨ç¤ºDebug.txtæ–‡ä»¶ 
+		if (jsin.is_open()) {//å¦‚æœæ–‡ä»¶æ‰“å¼€æˆåŠŸ
+			nlohmann::json js;
+			jsin >> js;
+			if (js.contains("BoolDebug"))       BoolDebug       = js["BoolDebug"];
+			if (js.contains("BoolZbxs"))        BoolZbxs        = js["BoolZbxs"];
+			if (js.contains("BoolGameRunTime")) BoolGameRunTime = js["BoolGameRunTime"];
+			if (js.contains("BoolFPS"))         BoolFPS         = js["BoolFPS"];
+			if (js.contains("BoolMapMessage"))  BoolMapMessage  = js["BoolMapMessage"];
+			if (js.contains("BoolWarn"))        BoolWarn        = js["BoolWarn"];
+			if (js.contains("FPSWeek"))         FPSWeek         = js["FPSWeek"];
+			jsin.close();//å…³é—­æ–‡ä»¶
+		}
+		else {//å¦‚æœæ–‡ä»¶æ‰“å¼€å¤±è´¥
+			Debug("æ–‡ä»¶æ‰“å¼€å¤±è´¥: " + SetDataWay);
+			GameData("SDW", 1);//ä¿å­˜æ•°æ®
 		}
 	}
-	
 }
 
 
-bool gamestart(){//<----------------------------------------------------------ÓÎÏ·³õÊ¼»¯
-	GameData("GDR",-1);//¶ÁÈ¡ÓÎÏ·Êı¾İ
-	return GameMapData(Player.MapName);//¼ÓÔØ¶ÔÓ¦µØÍ¼ ·µ»ØfalseËµÃ÷µØÍ¼´ò¿ªÊ§°Ü
+bool gamestart(){//<----------------------------------------------------------æ¸¸æˆåˆå§‹åŒ–
+	GameData("GDR",-1);//è¯»å–æ¸¸æˆæ•°æ®
+	return GameMapData(Player.MapName);//åŠ è½½å¯¹åº”åœ°å›¾ è¿”å›falseè¯´æ˜åœ°å›¾æ‰“å¼€å¤±è´¥
 }
 
 
-void pmsx(){//<---------------------------------------------------------------ÆÁÄ»Ë¢ĞÂ 
-	
+void pmsx(){//<---------------------------------------------------------------å±å¹•åˆ·æ–° 
 //	cls();
 	std::string str;
+	str += "ä¸»è§’ä¿¡æ¯:\n";
 	
-	
-	str += "Ö÷½ÇĞÅÏ¢:\n";
-	
-	//=====ÑªÌõÏÔÊ¾ 
+	//=====è¡€æ¡æ˜¾ç¤º 
 	int num1 = Player.Life / 10;
 	int num2 = Player.Life % 10;
-	str += "ÉúÃüÖµ:";
+	str += "ç”Ÿå‘½å€¼:";
 	str += std::to_string(Player.Life)+" ";
 	for(int i=1;i<=num1;i++) str+="##";
 	if(num2>=5) str+="# ";
@@ -575,49 +578,43 @@ void pmsx(){//<---------------------------------------------------------------ÆÁ
 	for(int i=1;i<=10-num1;i++) str+="  ";
 	str += "\n";
 	
-	
-	if(BoolZbxs){//=====×ø±êÏÔÊ¾ 
-		str += "Î»ÖÃ:" + std::to_string(Player.myx) + " " + std::to_string(Player.myy) + "   ";
+	if(BoolZbxs){//=====åæ ‡æ˜¾ç¤º 
+		str += "ä½ç½®:" + std::to_string(Player.myx) + " " + std::to_string(Player.myy) + "   ";
 		str += "Last:" + std::to_string(Player.LastX) + " " + std::to_string(Player.LastY) + "   ";
 		str += "Next:" + std::to_string(Player.NextX) + " " + std::to_string(Player.NextY) + "          \n";
 	}
 	
-	if(BoolGameRunTime){//ÓÎÏ·Ê±¿ÌÏÔÊ¾ 
-		str +="ÓÎÏ·Ê±¿Ì:"+std::to_string(GameRunTime)+"\n";
+	if(BoolGameRunTime){//æ¸¸æˆæ—¶åˆ»æ˜¾ç¤º 
+		str +="æ¸¸æˆæ—¶åˆ»:"+std::to_string(GameRunTime)+"\n";
 	}
 	
-	if(BoolFPS){//=====FPSÏÔÊ¾ 
-//		Debug(to_string(GameRunTime % FPSWeek),-1);
+	if(BoolFPS){//=====FPSæ˜¾ç¤º 
 		if(!(GameRunTime % FPSWeek)){
 			clock_t NowTime=clock();
 			JGTime = (NowTime-LastTime)/FPSWeek;
 			FPS = (1000*FPSWeek)/(NowTime-LastTime);
-//			Debug("FPS "+to_string(FPS),-1);
-//			Debug("FPS= "+to_string((1000*FPSWeek)/(NowTime-LastTime)),-1);
-//			Debug("Week "+to_string(FPSWeek),-1);
-//			Debug("Time "+to_string(NowTime-LastTime),-1); 
 			LastTime = NowTime;
 		}
 		str +="FPS:"+std::to_string(FPS)+" "+std::to_string(JGTime)+"ms      \n";
 	}
 	
-	if(BoolMapMessage){//=====µØÍ¼ÎÄ¼şĞÅÏ¢ÏÔÊ¾ 
-		str+="ÎÄ¼şÃû:"+Player.MapName+" ´óĞ¡XY:"+std::to_string(Map.maxx)+"*"+std::to_string(Map.maxy)+" ÊÂ¼ş:"+std::to_string(Map.SJData.SJNum);
+	if(BoolMapMessage){//=====åœ°å›¾æ–‡ä»¶ä¿¡æ¯æ˜¾ç¤º 
+		str+="æ–‡ä»¶å:"+Player.MapName+" å¤§å°XY:"+std::to_string(Map.maxx)+"*"+std::to_string(Map.maxy)+" äº‹ä»¶:"+std::to_string(Map.SJData.SJNum);
 		str+="\n";
 	}
 	
 	
-	for(int i=0;i<Map.maxy;i++){//µØÍ¼ÏÔÊ¾ 
+	for(int i=0;i<Map.maxy;i++){//åœ°å›¾æ˜¾ç¤º 
 		for(int j=0;j<Map.maxx;j++){
 			int num = Map.Data[i][j];
 			
 			if(j == Player.myx && i == Player.myy) str+="MY";
 			else if(num ==  0) str+="  ";
 			else if(num ==  1) str+="##"; 
-			else if(num ==  2) str+="ÃÅ"; 
+			else if(num ==  2) str+="é—¨"; 
 			else if(num ==  9) str+="%%"; 
-			else if(num == 10) str+="µĞ"; 
-			else if(num == 11) str+="ÈË"; 	
+			else if(num == 10) str+="æ•Œ"; 
+			else if(num == 11) str+="äºº"; 	
 		}
 		str+="  ";
 		str+="\n"; 
@@ -626,268 +623,246 @@ void pmsx(){//<---------------------------------------------------------------ÆÁ
 	for(int i=0;i<=Map.maxx;i++) str+="  ";
 	str+="\n";
 	
-	str+=Map.name;//µØÍ¼Ãû³Æ 
+	str+=Map.name;//åœ°å›¾åç§° 
 	str+="\n";
 	
-	ct(0,0,str);
+	ct(0, 0, str);
+	ct(0, 0, "");
 }
 
 
-
-
-void playerinput(char input){//<---------------------------------------------------Íæ¼ÒÊäÈë 
-	
+void playerinput(char input){//<---------------------------------------------------ç©å®¶è¾“å…¥ 
 	if(input == 'r' || input == 'R'){
-		GameData("GDW",1);
-		cz=0;
+		GameData("GDW",1);//ä¿å­˜æ¸¸æˆæ•°æ®
+		cz=0;//åˆ‡æ¢å¼€å§‹èœå•
 	}
-	
-	int xx=0,yy=0;
-	if(input == 'w' || input == 'W'){
+	int xx=0,yy=0;//å®šä¹‰åæ ‡å˜åŒ–é‡
+	if(input == 'w' || input == 'W'){//ä¸Š
 		yy--;
-	}else if(input == 'a' || input == 'A'){
+	}else if(input == 'a' || input == 'A'){//å·¦
 		xx--;
-	}else if(input == 's' || input == 'S'){
+	}else if(input == 's' || input == 'S'){//ä¸‹
 		yy++;
-	}else if(input == 'd' || input == 'D'){
+	}else if(input == 'd' || input == 'D'){//å³
 		xx++;
 	}
-	
-//	if(1){
-//		Player.LastX = Player.myx;
-//		Player.LastY = Player.myy;
-//	}
-	
-	
-	Player.NextX = Player.myx + xx;
+	Player.NextX = Player.myx + xx;//è®¡ç®—ç©å®¶çš„è¡ŒåŠ¨åæ ‡
 	Player.NextY = Player.myy + yy;
-	
-	
-	int num = Map.Data[Player.myy + yy][Player.myx + xx];
-	
-	if(num == 0 || num == 2 || num == 9){
-		
-		Player.LastX = Player.myx;
-		Player.LastY = Player.myy;
-		
-		Player.myx += xx;
+	int num = Map.Data[Player.NextY][Player.NextX];//è·å–ç©å®¶è¡ŒåŠ¨åæ ‡çš„åœ°å›¾æ•°æ®
+	if(num == 0 || num == 2 || num == 9){//å½“ç©å®¶è¡ŒåŠ¨åæ ‡æ˜¯å¦å¯ä»¥é€šè¿‡
+		Player.LastX = Player.NextX;//ç»è¿‡åæ ‡
+		Player.LastY = Player.NextY;
+		Player.myx += xx;//å½“å‰åæ ‡
 		Player.myy += yy;
 	}
-	
 }
 
-void shpd(){//<---------------------------------------------------------------------ÉËº¦ÅĞ¶¨ 
-	
-	if(Map.Data[Player.myy][Player.myx] == 9){//ÏİÚåÅĞ¶¨ 
-		Player.Life-=3;	
+
+void shpd(){//<---------------------------------------------------------------------ä¼¤å®³åˆ¤å®š 
+	if(Map.Data[Player.myy][Player.myx] == 9){//é™·é˜±åˆ¤å®š 
+		Player.Life -= 3;//é€ æˆä¼¤å®³
 	}
-	
 //	Debug(to_string(Player.myx)+" "+to_string(Player.LastX)+" "+to_string(Player.myy)+" "+to_string(Player.LastY),-1);
-	if(Player.myx != Player.LastX || Player.myy != Player.LastY){//µĞÈËÅĞ¶¨ 
-		int drsl = 0;//µĞÈËÊıÁ¿ 
+	if(Player.myx != Player.LastX || Player.myy != Player.LastY){//æ•Œäººåˆ¤å®š 
+		int drsl = 0;//æ•Œäººæ•°é‡ 
 		int numX,numY;
 		numX = Player.myx;
 		numY = Player.myy;
 		for(int i=-1;i<=1;i++){
 			for(int j=-1;j<=1;j++){
-				if(Map.Data[numY+i][numX+j] == 10){
-					drsl++; 
+				if(Map.Data[numY+i][numX+j] == 10){//å½“ç©å®¶å‘¨å›´æœ‰æ•Œäººæ—¶
+					drsl++; //æ•Œäººæ•°é‡åŠ ä¸€
 				}
 			}
 		}
-//		Debug("µĞÈËÅĞ¶¨ ",drsl);
-		Player.Life-=drsl;//Ôì³ÉÉËº¦ 
+//		Debug("æ•Œäººåˆ¤å®š ",drsl);
+		Player.Life-=drsl;//é€ æˆä¼¤å®³ 
 	}
-	
-	if(Player.Life<0)Player.Life;
+	if(Player.Life<0)Player.Life = 0;//é˜²æ­¢ç”Ÿå‘½å°ä¸é›¶
 }
 
 
-void swpd(){//<---------------------------------------------------------------------ËÀÍöÅĞ¶¨ 
-	if(Player.Life<=0){
-		cz=-1;
+void swpd(){//<---------------------------------------------------------------------æ­»äº¡åˆ¤å®š 
+	if(Player.Life<=0){//å½“ç©å®¶ç”Ÿå‘½å°äºç­‰äºé›¶æ—¶
+		cz = -1;//åˆ‡æ¢åˆ°æ­»äº¡ç•Œé¢
 	}
 }
 
 
-void MapSJ(){//<---------------------------------------------------------------------ÌØÊâÊÂ¼ş 
-	int num = Map.SJData.SJNum; //ÊÂ¼şÊıÁ¿ 
+void MapSJ(){//<---------------------------------------------------------------------ç‰¹æ®Šäº‹ä»¶ 
+	int num = Map.SJData.SJNum; //äº‹ä»¶æ•°é‡ 
 	for(int i=0;i<num;i++){
-		int SJX,SJY,SJLX;//ÊÂ¼şX ÊÂ¼şY ÊÂ¼şÀàĞÍ 
-		SJX = Map.SJData.Data[i].X;//»ñÈ¡·¢ÉúÎ»ÖÃX 
-		SJY = Map.SJData.Data[i].Y;//»ñÈ¡·¢ÉúÎ»ÖÃY 
-		if (SJX == Player.NextX && SJY == Player.NextY && (Player.NextX != Player.LastX || Player.NextY != Player.LastY)) {//µ±Íæ¼ÒÎ»ÖÃ·ûºÏÊ± ²¢ÇÒ²»µÈÓÚÉÏ´ÎµÄ×ø±ê
-			Player.LastX = Player.NextX;//½«Íæ¼Ò(ÉÏ´ÎµÄ×ø±ê)ÉèÖÃÎªÍæ¼ÒµÄĞĞ¶¯×ø±ê ÒÔ·ÀÖ¹ÖØ¸´´¥·¢ 
-			Player.LastY = Player.NextY;//½«Íæ¼Ò(ÉÏ´ÎµÄ×ø±ê)ÉèÖÃÎªÍæ¼ÒµÄĞĞ¶¯×ø±ê ÒÔ·ÀÖ¹ÖØ¸´´¥·¢ 
+		int SJX,SJY,SJLX;//äº‹ä»¶X äº‹ä»¶Y äº‹ä»¶ç±»å‹ 
+		SJX = Map.SJData.Data[i].X;//è·å–å‘ç”Ÿä½ç½®X 
+		SJY = Map.SJData.Data[i].Y;//è·å–å‘ç”Ÿä½ç½®Y 
+		if (SJX == Player.NextX && SJY == Player.NextY && (Player.NextX != Player.LastX || Player.NextY != Player.LastY)) {//å½“ç©å®¶ä½ç½®ç¬¦åˆæ—¶ å¹¶ä¸”ä¸ç­‰äºä¸Šæ¬¡çš„åæ ‡
+			Player.LastX = Player.NextX;//å°†ç©å®¶(ä¸Šæ¬¡çš„åæ ‡)è®¾ç½®ä¸ºç©å®¶çš„è¡ŒåŠ¨åæ ‡ ä»¥é˜²æ­¢é‡å¤è§¦å‘ 
+			Player.LastY = Player.NextY;//å°†ç©å®¶(ä¸Šæ¬¡çš„åæ ‡)è®¾ç½®ä¸ºç©å®¶çš„è¡ŒåŠ¨åæ ‡ ä»¥é˜²æ­¢é‡å¤è§¦å‘ 
 			SJLX = Map.SJData.Data[i].Type;
-			if(SJLX == 1){//===================================(1)´«ËÍÊÂ¼ş 
+			if(SJLX == 1){//===================================(1)ä¼ é€äº‹ä»¶ 
 				Player.myx = Map.SJData.CSData[Map.SJData.Data[i].Hand].X;//X
 				Player.myy = Map.SJData.CSData[Map.SJData.Data[i].Hand].Y;//Y
-				Player.MapName = Map.SJData.CSData[Map.SJData.Data[i].Hand].MapName;//´«ËÍµÄÄ¿±ê
-				GameMapData(Player.MapName);//¸üĞÂµØÍ¼ÄÚ´æ 
-				cls();//ÇåÆÁ
-			}else if(SJLX == 2){//=============================(2)¶Ô»°ÊÂ¼ş
-				std::string DHR;//¶Ô»°ÈË
-				DHR = Map.SJData.DHData[Map.SJData.Data[i].Hand].ObjectName;//»ñÈ¡¶Ô»°ÈË
-				int DHnum;//¶Ô»°ÊıÁ¿
-				DHnum = Map.SJData.DHData[Map.SJData.Data[i].Hand].DHNum;//»ñÈ¡¶Ô»°ÊıÁ¿
-				int DHHand = 0;//ÕıÔÚÏÔÊ¾¶Ô»°µÄÖ¸Õë
-				while(1){//ÏÔÊ¾¶Ô»° 
+				Player.MapName = Map.SJData.CSData[Map.SJData.Data[i].Hand].MapName;//ä¼ é€çš„ç›®æ ‡
+				GameMapData(Player.MapName);//æ›´æ–°åœ°å›¾å†…å­˜ 
+				cls();//æ¸…å±
+			}else if(SJLX == 2){//=============================(2)å¯¹è¯äº‹ä»¶
+				std::string DHR;//å¯¹è¯äºº
+				DHR = Map.SJData.DHData[Map.SJData.Data[i].Hand].ObjectName;//è·å–å¯¹è¯äºº
+				int DHnum;//å¯¹è¯æ•°é‡
+				DHnum = Map.SJData.DHData[Map.SJData.Data[i].Hand].DHNum;//è·å–å¯¹è¯æ•°é‡
+				int DHHand = 0;//æ­£åœ¨æ˜¾ç¤ºå¯¹è¯çš„æŒ‡é’ˆ
+				while(1){//æ˜¾ç¤ºå¯¹è¯ 
 					std::string str;
-					str+="\n"+DHR+":\n";//´òÓ¡¶Ô»°ÕßµÄÃû×Ö 
-					str+="|   "+Map.SJData.DHData[Map.SJData.Data[i].Hand].DH[DHHand].Text + "\n\n";//»ñÈ¡¶Ô»°µÄÎÄ±¾ 
-					int HDnum = Map.SJData.DHData[Map.SJData.Data[i].Hand].DH[DHHand].HDNum;//»ñÈ¡»Ø´ğµÄÊıÁ¿
-					if(HDnum == 0){//µ±Ã»ÓĞ»Ø´ğÊ± 
-						str+="f.¼ÌĞø";
-					}else{//µ±ÓĞ»Ø´ğÊ± 
-						str+="ÄãµÄ»Ø´ğ:\n";
-						for(int j=0;j<HDnum;j++){//Õ¹Ê¾»Ø´ğ 
-							str+=std::to_string(j+1)+".";//´òÓ¡ĞòºÅ 
-							str+=Map.SJData.DHData[Map.SJData.Data[i].Hand].DH[DHHand].HD[j].Text;//´òÓ¡»Ø´ğÄÚÈİ
+					str+="\n"+DHR+":\n";//æ‰“å°å¯¹è¯è€…çš„åå­— 
+					str+="|   "+Map.SJData.DHData[Map.SJData.Data[i].Hand].DH[DHHand].Text + "\n\n";//è·å–å¯¹è¯çš„æ–‡æœ¬ 
+					int HDnum = Map.SJData.DHData[Map.SJData.Data[i].Hand].DH[DHHand].HDNum;//è·å–å›ç­”çš„æ•°é‡
+					if(HDnum == 0){//å½“æ²¡æœ‰å›ç­”æ—¶ 
+						str+="f.ç»§ç»­";
+					}else{//å½“æœ‰å›ç­”æ—¶ 
+						str+="ä½ çš„å›ç­”:\n";
+						for(int j=0;j<HDnum;j++){//å±•ç¤ºå›ç­” 
+							str+=std::to_string(j+1)+".";//æ‰“å°åºå· 
+							str+=Map.SJData.DHData[Map.SJData.Data[i].Hand].DH[DHHand].HD[j].Text;//æ‰“å°å›ç­”å†…å®¹
 							str+="\n"; 
 						}
 					}
-					cls();//Çå¿ÕÆÁÄ» 
-					ct(0,2,str);//´òÓ¡»º´æ
-					char input =_getch();//»ñÈ¡Íæ¼ÒÊäÈë 
-					if(HDnum == 0){//µ±Ã»ÓĞ»Ø´ğÊ± 
-						if(input == 'f' || input =='F'){//µ±Íæ¼ÒÊäÈëFÊ± 
-							DHHand++;//ÇĞ»»ÏÂÒ»¸ö¶Ô»° 
+					cls();//æ¸…ç©ºå±å¹• 
+					ct(0,2,str);//æ‰“å°ç¼“å­˜
+					char input =_getch();//è·å–ç©å®¶è¾“å…¥ 
+					if(HDnum == 0){//å½“æ²¡æœ‰å›ç­”æ—¶ 
+						if(input == 'f' || input =='F'){//å½“ç©å®¶è¾“å…¥Fæ—¶ 
+							DHHand++;//åˆ‡æ¢ä¸‹ä¸€ä¸ªå¯¹è¯ 
 						}
-					}else{//µ±ÓĞ»Ø´ğÊ±
-						if(input >= '1' && input <= '9'){//¼ì²éÍæ¼ÒÊäÈëÊÇ·ñÎªÊı×Ö 
-							int INPUT = input-'0';//½« char ×ª»»Îª int
-							if(INPUT <= HDnum){//¼ì²éÍæ¼ÒÊäÈëÊÇ·ñÔÚ »Ø´ğÊıÁ¿ Ö®ÄÚ
-								int GOHand = Map.SJData.DHData[Map.SJData.Data[i].Hand].DH[DHHand].HD[INPUT-1].JG;//»ñÈ¡Ìø×ª¶Ô»°µÄĞòºÅ
-								if(GOHand == 0) DHHand++;//µ± Ìø×ª¶Ô»°µÄĞòºÅ Îª(0) ½« ÏÂÒ»Ò³ ÉèÖÃÎªÏÔÊ¾ 
-								else if(GOHand == -1) break;//µ± Ìø×ª¶Ô»°µÄĞòºÅ Îª(-1) ÍË³ö¶Ô»° 
-								else DHHand = GOHand; //¶¼²»ÊÇ ½« Ö¸¶¨µÄ¶Ô»° ÉèÖÃÎªÏÔÊ¾ 
+					}else{//å½“æœ‰å›ç­”æ—¶
+						if(input >= '1' && input <= '9'){//æ£€æŸ¥ç©å®¶è¾“å…¥æ˜¯å¦ä¸ºæ•°å­— 
+							int INPUT = input-'0';//å°† char è½¬æ¢ä¸º int
+							if(INPUT <= HDnum){//æ£€æŸ¥ç©å®¶è¾“å…¥æ˜¯å¦åœ¨ å›ç­”æ•°é‡ ä¹‹å†…
+								int GOHand = Map.SJData.DHData[Map.SJData.Data[i].Hand].DH[DHHand].HD[INPUT-1].JG;//è·å–è·³è½¬å¯¹è¯çš„åºå·
+								if(GOHand == 0) DHHand++;//å½“ è·³è½¬å¯¹è¯çš„åºå· ä¸º(0) å°† ä¸‹ä¸€é¡µ è®¾ç½®ä¸ºæ˜¾ç¤º 
+								else if(GOHand == -1) break;//å½“ è·³è½¬å¯¹è¯çš„åºå· ä¸º(-1) é€€å‡ºå¯¹è¯ 
+								else DHHand = GOHand; //éƒ½ä¸æ˜¯ å°† æŒ‡å®šçš„å¯¹è¯ è®¾ç½®ä¸ºæ˜¾ç¤º 
 							} 
 						}
 					}
-					if(DHHand >= DHnum) break;//µ± µ±Ç°¶Ô»°³¬¹ı¶Ô»°ÊıÁ¿Ê± ÍË³ö¶Ô»° 
+					if(DHHand >= DHnum) break;//å½“ å½“å‰å¯¹è¯è¶…è¿‡å¯¹è¯æ•°é‡æ—¶ é€€å‡ºå¯¹è¯ 
 				}
 			}
-			cls();//Çå¿ÕÆÁÄ» 
-			GameData("GDW", 1);
+			cls();//æ¸…ç©ºå±å¹• 
+			GameData("GDW", 1);//ä¿å­˜æ¸¸æˆ
 		}
 	}
 }
 
 
-void Lifeup(){//<-------------------------------------------------------------------ÉúÃü×ÔÈ»»Ø¸´ 
-	if(GameRunTime %10 == 0 && Player.Life<Player.MaxLife){
-		Player.Life++;
+void Lifeup(){//<-------------------------------------------------------------------ç”Ÿå‘½è‡ªç„¶å›å¤ 
+	if(GameRunTime %10 == 0 && Player.Life < Player.MaxLife){//æ¡ä»¶åˆ¤æ–­
+		Player.Life++;//å›å¤ç”Ÿå‘½
+	}
+	else if (Player.Life > Player.MaxLife) {//é˜²æ­¢ç”Ÿå‘½å¤§äºæœ€å¤§ç”Ÿå‘½
+		Player.Life = Player.MaxLife;
 	}
 }
 
 
-void SaveData(int Week){//<-----------------------------------------------------------ÓÎÏ·×Ô¶¯±£´æ 
-	if(GameRunTime %Week == 0){
-		GameData("GDW",1);
+void SaveData(int Week){//<-----------------------------------------------------------æ¸¸æˆè‡ªåŠ¨ä¿å­˜ 
+	if(GameRunTime %Week == 0){//æ¡ä»¶åˆ¤å®š
+		GameData("GDW",1);//ä¿å­˜æ¸¸æˆ
 	}
 } 
 
 
-void gameon(){//=======================================================================ÓÎÏ·Ö÷¿Ø 
+void gameon(){//=======================================================================æ¸¸æˆä¸»æ§ 
 	while(cz == 1) {
-		pmsx();//ÆÁÄ»Ë¢ĞÂ 
-		shpd();//ÉËº¦ÅĞ¶¨ 
-		swpd();//ËÀÍöÅĞ¶¨
-		Lifeup();//ÉúÃü×ÔÈ»»Ø¸´ 
-		if(_kbhit()) playerinput(_getch());//Íæ¼ÒÊäÈë 
-		MapSJ();//µØÍ¼ÌØÊâÊÂ¼ş 
-		SaveData(100);//×Ô¶¯±£´æ 
-		GameRunTime++;//Ã¿Ñ­»·Ò»´ÎÓÎÏ·Ê±¿Ì¼Ó1 
-		Sleep(10);//ÓÎÏ·ÑÓ³Ù 
+		pmsx();//å±å¹•åˆ·æ–° 
+		shpd();//ä¼¤å®³åˆ¤å®š 
+		swpd();//æ­»äº¡åˆ¤å®š
+		Lifeup();//ç”Ÿå‘½è‡ªç„¶å›å¤ 
+		if(_kbhit()) playerinput(_getch());//ç©å®¶è¾“å…¥ 
+		MapSJ();//åœ°å›¾ç‰¹æ®Šäº‹ä»¶ 
+		SaveData(100);//è‡ªåŠ¨ä¿å­˜ 
+		GameRunTime++;//æ¯å¾ªç¯ä¸€æ¬¡æ¸¸æˆæ—¶åˆ»åŠ 1 
+		Sleep(10);//æ¸¸æˆå»¶è¿Ÿ 
 	}
 }
 
 
-void ymxs(){//<----------------------------------------------------------------------Ò³ÃæÏÔÊ¾
-	//Ò»Ğ©¼òµ¥µÄif 
-	if(cz == 1) gameon();//ÓÎÏ·Ò³Ãæ====================(1) 
-	if(cz == 0){//ÆğÊ¼Ò³Ãæ====================(0) 
+void ymxs(){//<----------------------------------------------------------------------é¡µé¢æ˜¾ç¤º
+	//ä¸€äº›ç®€å•çš„if 
+	if(cz == 1) gameon();//æ¸¸æˆé¡µé¢====================(1) 
+	if(cz == 0){//èµ·å§‹é¡µé¢====================(0) 
     	while(1) {//input
 			std::string str;
-			str+= "Ã°ÏÕÖ®Â·\n1.¼ÌĞøÓÎÏ·\n2.ÉèÖÃ\n3.¹ØÓÚ\n\nr.ÍË³öÓÎÏ·";
-			
-			cls();
-			ct(0,0,str);
-	        char input=_getch();
-			if(input == '1') {
-				if (gamestart())cz = 1;//Èç¹û³õÊ¼»¯³É¹¦ ÇĞ»»µ½ÓÎÏ·½çÃæ
+			str+= "å†’é™©ä¹‹è·¯\n1.ç»§ç»­æ¸¸æˆ\n2.è®¾ç½®\n3.å…³äº\n\nr.é€€å‡ºæ¸¸æˆ";
+			cls();//æ¸…å±
+			ct(0,0,str);//æ‰“å°æ–‡æœ¬
+	        char input=_getch();//è·å–ç©å®¶è¾“å…¥
+			if(input == '1') {//é€‰é¡¹ ç»§ç»­æ¸¸æˆ-----(1)
+				if (gamestart())cz = 1;//å¦‚æœåˆå§‹åŒ–æˆåŠŸ åˆ‡æ¢åˆ°æ¸¸æˆç•Œé¢
 	            break;
-	        }else if(input == '2') {
-				cz=2;
-				GameData("SDR",-1);
+	        }else if(input == '2') {//é€‰é¡¹ è®¾ç½®-----(2)
+				cz=2;//åˆ‡æ¢åˆ°è®¾ç½®ç•Œé¢
+				GameData("SDR",-1);//è¯»å–è®¾ç½®æ•°æ®
 	            break;
-	        }else if(input == '3') {
-				cz=3;
+	        }else if(input == '3') {//é€‰é¡¹ å…³äº-----(3)
+				cz=3;//åˆ‡æ¢åˆ°å…³äºç•Œé¢
 	            break;
-	        }else if(input == 'r' || input == 'R') {
-	        	BoolTheGame=0;
+	        }else if(input == 'r' || input == 'R') {//é€‰é¡¹ é€€å‡ºæ¸¸æˆ-----(r)
+	        	BoolTheGame = false;//ç»“æŸæ¸¸æˆä¸»å¾ªç¯
 	            return;
 	        }
 		}
-	}else if(cz == 2){//ÉèÖÃÒ³Ãæ====================(2) 
+	}else if(cz == 2){//è®¾ç½®é¡µé¢====================(2) 
 		while(1){
 			std::string str;
-			
-			str+="ÉèÖÃ\n";
-			str+="1.ÈÕÖ¾¼ÇÂ¼          µ±Ç°:";if(BoolDebug)       str+="¿ª\n";else str+="¹Ø\n";
-			str+="2.FPSÏÔÊ¾           µ±Ç°:";if(BoolFPS)         str+="¿ª\n";else str+="¹Ø\n";
-			str+="3.FPSË¢ĞÂ¼ä¸ô       µ±Ç°:";                    str+="Ã¿"+std::to_string(FPSWeek)+"ÓÎÏ·Ê±¿Ì¸üĞÂ\n";
-			str+="4.ÓÎÏ·Ê±¿ÌÏÔÊ¾      µ±Ç°:";if(BoolGameRunTime) str+="¿ª\n";else str+="¹Ø\n";
-			str+="5.×ø±êÏÔÊ¾          µ±Ç°:";if(BoolZbxs)        str+="¿ª\n";else str+="¹Ø\n";
-			str+="6.µØÍ¼ĞÅÏ¢ÏÔÊ¾      µ±Ç°:";if(BoolMapMessage)      str+="¿ª\n";else str+="¹Ø\n";
-			
+			str += "è®¾ç½®\n";
+			str += "1.æ—¥å¿—è®°å½•          å½“å‰:";if(BoolDebug)       str+="å¼€\n";else str+="å…³\n";
+			str += "2.FPSæ˜¾ç¤º           å½“å‰:";if(BoolFPS)         str+="å¼€\n";else str+="å…³\n";
+			str += "3.FPSåˆ·æ–°é—´éš”       å½“å‰:";                    str+="æ¯"+std::to_string(FPSWeek)+"æ¸¸æˆæ—¶åˆ»æ›´æ–°\n";
+			str += "4.æ¸¸æˆæ—¶åˆ»æ˜¾ç¤º      å½“å‰:";if(BoolGameRunTime) str+="å¼€\n";else str+="å…³\n";
+			str += "5.åæ ‡æ˜¾ç¤º          å½“å‰:";if(BoolZbxs)        str+="å¼€\n";else str+="å…³\n";
+			str += "6.åœ°å›¾ä¿¡æ¯æ˜¾ç¤º      å½“å‰:";if(BoolMapMessage)  str+="å¼€\n";else str+="å…³\n";
+			str += "7.è­¦å‘Šæ˜¾ç¤º          å½“å‰:";if(BoolWarn)        str+="å¼€\n";else str+="å…³\n";
+			str += "8.é‡ç½®æ¸¸æˆæ•°æ®      å½“å‰:æ— \n";
 			str+="\n\n\n";
-			str+="r.·µ»Ø";
-
-			cls();
-			ct(0,0,str);
-			
-	        char input=_getch();
-	        if(input == '1'){//Ñ¡Ïî ÈÕÖ¾¼ÇÂ¼-----(1) 
-				BoolDebug = BoolDebug ? false : true;
-			}else if(input == '2'){//Ñ¡Ïî FPSÏÔÊ¾-----(2)
-	        	BoolFPS = BoolFPS ? false : true;
-			}else if(input == '3'){//Ñ¡Ïî FPSÏÔÊ¾-----(3)
+			str+="r.è¿”å›";
+			cls();//æ¸…å±
+			ct(0,0,str);//æ‰“å°æ–‡æœ¬
+	        char input=_getch();//è·å–ç©å®¶è¾“å…¥
+	        if(input == '1'){//é€‰é¡¹ æ—¥å¿—è®°å½•-----(1) 
+				BoolDebug = BoolDebug ? false : true;//åˆ‡æ¢çŠ¶æ€
+			}else if(input == '2'){//é€‰é¡¹ FPSæ˜¾ç¤º-----(2)
+	        	BoolFPS = BoolFPS ? false : true;//åˆ‡æ¢çŠ¶æ€
+			}else if(input == '3'){//é€‰é¡¹ FPSæ˜¾ç¤º-----(3)
 	        	while(1){
-	        		str+="FPSË¢ĞÂ¼ä¸ô\n"; 
-	        		str+="1.Ã¿1Ê±¿Ì¸üĞÂ\n";
-	        		str+="2.Ã¿2Ê±¿Ì¸üĞÂ\n";
-	        		str+="3.Ã¿5Ê±¿Ì¸üĞÂ\n";
-	        		str+="4.Ã¿10Ê±¿Ì¸üĞÂ\n";
-	        		str+="5.Ã¿20Ê±¿Ì¸üĞÂ\n";
-	        		str+="6.×Ô¶¨Òå\n";
-	        		
+	        		str+="FPSåˆ·æ–°é—´éš”\n"; 
+	        		str+="1.æ¯1æ—¶åˆ»æ›´æ–°\n";
+	        		str+="2.æ¯2æ—¶åˆ»æ›´æ–°\n";
+	        		str+="3.æ¯5æ—¶åˆ»æ›´æ–°\n";
+	        		str+="4.æ¯10æ—¶åˆ»æ›´æ–°\n";
+	        		str+="5.æ¯20æ—¶åˆ»æ›´æ–°\n";
+	        		str+="6.è‡ªå®šä¹‰\n";
 	        		str+="\n";
-	        		str+="µ±Ç°:Ã¿"+std::to_string(FPSWeek)+"ÓÎÏ·Ê±¿Ì¸üĞÂ";
-	        		
+	        		str+="å½“å‰:æ¯"+std::to_string(FPSWeek)+"æ¸¸æˆæ—¶åˆ»æ›´æ–°";
 	        		str+="\n\n\n";
-					str+="r.·µ»Ø";
-
+					str+="r.è¿”å›";
 					cls();
 	        		ct(0,0,str);
-	        		
 	        		char input1=_getch();
-	        		if(input1 == '1'){//Ñ¡Ïî  Ã¿1-(1) 
+	        		if(input1 == '1'){//é€‰é¡¹  æ¯1-(1) 
 	        			FPSWeek = 1;
-					}else if(input1 == '2'){//Ñ¡Ïî  Ã¿2-(2) 
+					}else if(input1 == '2'){//é€‰é¡¹  æ¯2-(2) 
 	        			FPSWeek = 2;
-					}else if(input1 == '3'){//Ñ¡Ïî  Ã¿5-(3) 
+					}else if(input1 == '3'){//é€‰é¡¹  æ¯5-(3) 
 	        			FPSWeek = 5;
-					}else if(input1 == '4'){//Ñ¡Ïî  Ã¿10-(4) 
+					}else if(input1 == '4'){//é€‰é¡¹  æ¯10-(4) 
 	        			FPSWeek = 10;
-					}else if(input1 == '5'){//Ñ¡Ïî  Ã¿20-(5) 
+					}else if(input1 == '5'){//é€‰é¡¹  æ¯20-(5) 
 	        			FPSWeek = 20;
-					}else if(input1 == '6'){//Ñ¡Ïî  ×Ô¶¨Òå-(6) 
+					}else if(input1 == '6'){//é€‰é¡¹  è‡ªå®šä¹‰-(6) 
 	        			while(1){
-	        				str+="FPSË¢ĞÂ¼ä¸ô ×Ô¶¨Òå\n";
-	        				str+="ÇëÊäÈë ÊıÖµ\n";
-	        				str+="·¶Î§ ÊıÖµ >= 1\n";
+	        				str+="FPSåˆ·æ–°é—´éš” è‡ªå®šä¹‰\n";
+	        				str+="è¯·è¾“å…¥ æ•°å€¼\n";
+	        				str+="èŒƒå›´ æ•°å€¼ >= 1\n";
 	        				cls();
 	        				ct(0,0,str);
 	        				int num;
@@ -896,7 +871,7 @@ void ymxs(){//<-----------------------------------------------------------------
 	        					FPSWeek = num;
 								break; 
 							}else{
-								str+="\n·¶Î§´íÎó °´ r ¼üÒÔÖØĞÂÊäÈë\n";
+								str+="\nèŒƒå›´é”™è¯¯ æŒ‰ r é”®ä»¥é‡æ–°è¾“å…¥\n";
 								ct(0,0,str);
 								while(1){
 									char input2 = _getch();
@@ -911,42 +886,45 @@ void ymxs(){//<-----------------------------------------------------------------
 			            break;
 					}
 				} 
-			}else if(input == '4'){//Ñ¡Ïî ÓÎÏ·Ê±¿ÌÏÔÊ¾-----(4)
-	        	BoolGameRunTime = BoolGameRunTime ? false : true;
-			}else if(input == '5'){//Ñ¡Ïî ×ø±êÏÔÊ¾-----(5)
-	        	BoolZbxs = BoolZbxs ? false : true;
-			}else if(input == '6'){//Ñ¡Ïî µØÍ¼ĞÅÏ¢ÏÔÊ¾-----(6)
-	        	BoolMapMessage = BoolMapMessage ? false : true;
-			}else if(input == 'r' || input == 'R') {//Ñ¡Ïî ·µ»Ø-----(r) 
-				GameData("SDW",-1);
-	        	cz=0;
-	            break;
+			}
+			else if(input == '4'){//é€‰é¡¹ æ¸¸æˆæ—¶åˆ»æ˜¾ç¤º-----(4)
+	        	BoolGameRunTime = BoolGameRunTime ? false : true;//åˆ‡æ¢çŠ¶æ€
+			}
+			else if(input == '5'){//é€‰é¡¹ åæ ‡æ˜¾ç¤º-----(5)
+	        	BoolZbxs = BoolZbxs ? false : true;//åˆ‡æ¢çŠ¶æ€
+			}
+			else if(input == '6'){//é€‰é¡¹ åœ°å›¾ä¿¡æ¯æ˜¾ç¤º-----(6)
+	        	BoolMapMessage = BoolMapMessage ? false : true;//åˆ‡æ¢çŠ¶æ€
+			}
+			else if (input == '7') {//é€‰é¡¹ è­¦å‘Šæ˜¾ç¤º-----(7)
+				BoolWarn = BoolWarn ? false : true;//åˆ‡æ¢çŠ¶æ€
+			}
+			else if (input == 'r' || input == 'R') {//é€‰é¡¹ è¿”å›-----(r) 
+				GameData("SDW",-1);//ä¿å­˜è®¾ç½®æ•°æ®
+	        	cz=0;//åˆ‡æ¢åˆ°åˆå§‹ç•Œé¢
+	            break;//é€€å‡ºå¾ªç¯
 	        }
 		}
-	}else if(cz == 3){//¹ØÓÚ====================(3) 
+	}else if(cz == 3){//å…³äº====================(3) 
 		while(1){
 			std::string str;
-			str+="¹ØÓÚ\n"; 
-			str+="WASD--¿ØÖÆ½ÇÉ«\n";
-			str+="R-----·µ»Ø\n";
-			
+			str+="å…³äº\n"; 
+			str+="WASD--æ§åˆ¶è§’è‰²\n";
+			str+="R-----è¿”å›\n";
 	        str+="\n\n\n";
-			str+="r.·µ»Ø";
-			
-			cls();
-			ct(0,0,str);
-			
-			char input=_getch();
-	        if(input == 'r' || input == 'R') {//Ñ¡Ïî ·µ»Ø-----(r)
-	        	cz=0;
-	            break;
+			str+="r.è¿”å›";
+			cls();//æ¸…å±
+			ct(0,0,str);//æ‰“å°æ–‡æœ¬
+			char input=_getch();//è·å–ç©å®¶è¾“å…¥
+	        if(input == 'r' || input == 'R') {//é€‰é¡¹ è¿”å›-----(r)
+	        	cz=0;//åˆ‡æ¢åˆ°åˆå§‹ç•Œé¢
+	            break;//é€€å‡ºå¾ªç¯
 	        }
 		}	
-	}else if(cz == -1){//ËÀÍöÒ³Ãæ====================(-1) 
-	
-		pmsx();//ÆÁÄ»Ë¢ĞÂ
-		GameData("GDR",0);
-		int X=5,Y=6;
+	}else if(cz == -1){//æ­»äº¡é¡µé¢====================(-1) 
+		pmsx();//å±å¹•åˆ·æ–°
+		GameData("GDW",0);//ä¿å­˜æ¸¸æˆæ•°æ®
+		int X=5,Y=6;//å®šä¹‰æ–‡æœ¬æ˜¾ç¤ºä½ç½®
 		std::string str;
 		str=" ________________________ ";
 		ct(X,Y+0,str);
@@ -958,76 +936,47 @@ void ymxs(){//<-----------------------------------------------------------------
 		ct(X,Y+3,str);
 		str="|                        |";
 		ct(X,Y+4,str);
-		str="|     !!!´æµµÒÔÉ¾³ı!!!   |";
+		str="|     !!!å­˜æ¡£ä»¥åˆ é™¤!!!   |";
 		ct(X,Y+5,str);
 		str="|                        |";
 		ct(X,Y+6,str);
-		str="|     ---°´R¼ü·µ»Ø---    |";
+		str="|     ---æŒ‰Ré”®è¿”å›---    |";
 		ct(X,Y+7,str);
 		str="|________________________|";
 		ct(X,Y+8,str);
 		while(1){
-			char input=_getch();
+			char input=_getch();//è·å–ç©å®¶è¾“å…¥
 			if(input == 'r' || input == 'R'){
-				cz=0;
-				break;
+				cz=0;//åˆ‡æ¢åˆ°èµ·å§‹ç•Œé¢
+				break;//é€€å‡ºå¾ªç¯
 			}
 		}
 	}
 }
 
-void Begin(){//----------------------------------------------------------------------³õÊ¼»¯
-	CDW(DataWayParent);//´´½¨ÎÄ¼ş¼Ğ GameData 
-	CDW(SetWayParent);//´´½¨ÎÄ¼ş¼Ğ Set
-	for(int i=1;i<=100;i++)ClsText+="                                                                                                                                    \n";//²¹³äÇåÆÁ 
+void Begin(){//----------------------------------------------------------------------åˆå§‹åŒ–
+	Debug("sss");//æ¸…ç©ºæ—¥å¿—
+	DebugError("sss");//æ¸…ç©ºé”™è¯¯æ—¥å¿—
+	DebugWarn("sss");//æ¸…ç©ºè­¦å‘Šæ—¥å¿—
+
+	GameData("SDR",-1);//è¯»å–è®¾ç½®æ•°æ®
+	Debug("åˆå§‹åŒ–");
+	CDW(DataParent);//åˆ›å»ºæ–‡ä»¶å¤¹ Data
+	CDW(DataWayParent);//åˆ›å»ºæ–‡ä»¶å¤¹ GameData 
+	CDW(SetWayParent);//åˆ›å»ºæ–‡ä»¶å¤¹ Set
+	for(int i=1;i<=555;i++)ClsText+="                       ";//è¡¥å……æ¸…å± 
 }
 
 int main() {//----------------------------------------------------------------------main 
 	
-	GameData("SDR",-1);
+	Begin();//åˆå§‹åŒ–
 	
-	Debug("sss");
-	Debug("³õÊ¼»¯");
-	Begin();
-	
-	Debug("ÓÎÏ·¿ªÊ¼==================");
+	Debug("æ¸¸æˆå¼€å§‹==================");
     
 	BoolTheGame = 1;
     while(BoolTheGame) {//main
     	ymxs();
     }
-	Debug("=============ÓÎÏ·Õı³£ÍË³ö");
-    return 0;
+	Debug("=============æ¸¸æˆæ­£å¸¸é€€å‡º");
+    return 0;//ç»“æŸè¿›ç¨‹
 }
-//
-//
-//
-//
-//
-//
-//
-//
-//void ksvoid(){//<--------------------------------------------------------------¿ìËÙ¶¨Î»º¯Êı 
-//	ct(0,0,"");//<-----------------------------------------Ö¸¶¨´òÓ¡
-//	Debug("");//<------------------------------------------ÈÕÖ¾
-//	cls();//<----------------------------------------------ÇåÆÁº¯Êı 
-//	CDW(L"");//<-------------------------------------------´´½¨ÎÄ¼ş¼Ğ 
-//	FFFW(L"");//<------------------------------------------»ñÈ¡ÎÄ¼ş 
-//	czdata("");//<-----------------------------------------ÖØÖÃÊı¾İ 
-//	GameMapData("");//<------------------------------------¶ÁÈ¡µØÍ¼ÎÄ¼ş
-//	GameData("",-1);//<------------------------------------±£´æ/¶ÁÈ¡ÓÎÏ·Êı¾İ 
-//	gamestart();//<----------------------------------------ÓÎÏ·³õÊ¼»¯
-//	pmsx();//<---------------------------------------------ÆÁÄ»Ë¢ĞÂ 
-//	playerinput('0');//<-----------------------------------Íæ¼ÒÊäÈë 
-//	shpd();//<---------------------------------------------ÉËº¦ÅĞ¶¨ 
-//	swpd();//<---------------------------------------------ËÀÍöÅĞ¶¨
-//	MapSJ();//<--------------------------------------------ÌØÊâÊÂ¼ş 
-//	Lifeup();//<-------------------------------------------ÉúÃü×ÔÈ»»Ø¸´ 
-//	SaveData(0);//<----------------------------------------ÓÎÏ·×Ô¶¯±£´æ 
-//	gameon();//============================================ÓÎÏ·Ö÷¿Ø 
-//	ymxs();//<---------------------------------------------ÏÔÊ¾Ò³Ãæ 
-//	Begin();//---------------------------------------------³õÊ¼»¯
-//	main();//----------------------------------------------main 
-//}
-//
-//
