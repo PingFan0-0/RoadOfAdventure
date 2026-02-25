@@ -279,7 +279,7 @@ bool FFFW(const std::wstring& str, const std::string FindMapName){//<-----------
 //==========
 //==========
 void Error(const std::string Text, const std::string Type) {
-	;//<-------------------------------------------------------------------------错误显示
+	;//<--------------------------------------------------------------------------------------------------错误显示
 	if (Type == "W") {//写入错误
 		DebugError("发生错误 " + std::to_string(ErrorNum) + ". " + Text);
 		ErrorText += "| " + std::to_string(ErrorNum) + ". " + Text + "\n";
@@ -298,8 +298,9 @@ void Error(const std::string Text, const std::string Type) {
 			str += "r.返回\n";
 			cls();
 			ct(0, 0, str);
+			break;//            <  ---------
 			char input = _getch();
-			if (input == 'r' || input == 'R')break;
+			if (input == 'r' || input == 'R') break;
 			else if (input == ' ')BoolError = BoolError ? false : true;
 		}
 		Error("", "sss");
@@ -367,6 +368,14 @@ bool OpenJson(const std::string WJWay, const std::string WJName, nlohmann::json&
 		return false;//输出 假
 	}
 	return false;
+}
+
+bool MousePlace(int MX, int MY, int X, int Y, int DX, int DY) {
+	if (MX >= X && MX <= DX) {
+		if (MY >= Y && MY <= DY) return true;
+		else return false;
+	}
+	else return false;
 }
 
 void czdata(std::string xz){//<--------------------------------------------------------------重置数据 
@@ -589,6 +598,8 @@ bool gamestart(){//<----------------------------------------------------------�
 	const int Size = 500;
 	loadimage(&ImgWell, _T("Data/墙.jpg"), Size, Size);//加载图片
 	loadimage(&ImgPlayer, _T("Data/玩家.jpg"), Size, Size);//加载图片
+	loadimage(&ImgWell, _T("Data/墙.jpg"), Win.Size, Win.Size);//加载图片
+	loadimage(&ImgPlayer, _T("Data/玩家.jpg"), Win.Size, Win.Size);//加载图片
 	return GameMapData(Player.MapName);//加载对应地图 返回false说明地图打开失败
 }
 
@@ -883,69 +894,119 @@ void YMBegin(){//<--------------------------------------------------------------
 	int TitleHigh = Win.WinY / 15;// ===== Title
 	int TitleX = Win.WinX / 2 - Win.WinX / 4;
 	int TitleY = Win.WinY / 20;
-	int ButtonHigh = Win.WinY / 20;// ===== Button
-	int ButtonWidth = Win.WinX / 8;
+	int ButtonHighT = Win.WinY / 20 + 5;// ===== Button
+	int ButtonHighF = Win.WinY / 20;
+	int ButtonWidth = 120;
 	int ButtonX = Win.WinX / 8;
 	int ButtonY = Win.WinY / 5;
 	int ButtonSpaceY = Win.WinY / 10;
-	int EndHigh = Win.WinY / 20;// ===== End
+	int EndHighT = ButtonHighT;// ===== End
+	int EndHighF = ButtonHighF;// ===== End
 	int EndWidth = ButtonWidth;
 	int EndX = ButtonX;
-	int EndY = Win.WinY - Win.WinY / 10 - EndHigh;
+	int EndY = Win.WinY - Win.WinY / 10 - EndHighF;
+
+	COLORREF ButtonT = RGB(255, 55, 55);
+	COLORREF ButtonF = RGB(255, 255, 255);
+
+	bool BoolButton1 = false;
+	bool BoolButton2 = false;
+	bool BoolButton3 = false;
+	bool BoolButton4 = false;
 
 	while (1) {
-		BeginBatchDraw();//将绘图保存在缓存中
+		peekmessage(&Mouse, EX_MOUSE);//获取鼠标数据
+		MouseX = Mouse.x;//更新鼠标坐标
+		MouseY = Mouse.y;
+
+		BeginBatchDraw();//将绘图保存在缓存中====================
 		std::wstring text;
 		settextstyle(TitleHigh, 0, _T("宋体"));//设置字体 ===== Title
 		settextcolor(RGB(255, 255, 0));//设置文字颜色
 		outtextxy(TitleX, TitleY, _T("冒险之路"));//输出文字
-		settextstyle(ButtonHigh, 0, _T("宋体"));//设置字体 ===== Button
-		settextcolor(RGB(255, 255, 255));//设置文字颜色
-		outtextxy(ButtonX, ButtonY + ButtonSpaceY * 0, _T("开始游戏"));//输出文字
-		outtextxy(ButtonX, ButtonY + ButtonSpaceY * 1, _T("设置"));//输出文字
-		outtextxy(ButtonX, ButtonY + ButtonSpaceY * 2, _T("关于"));//输出文字
-		settextstyle(EndHigh, 0, _T("宋体"));//设置字体 ===== Eng
-		settextcolor(RGB(255, 255, 255));//设置文字颜色
+		// ===== Button
+		if (MousePlace(MouseX, MouseY, ButtonX, ButtonY + ButtonSpaceY * 0, ButtonX + ButtonWidth, ButtonY + ButtonSpaceY * 0 + ButtonHighF)) {//设置字体 =-= (开始游戏)
+			settextstyle(ButtonHighT, 0, _T("宋体"));
+			settextcolor(ButtonT);//设置文字颜色
+			BoolButton1 = true;
+		}
+		else {
+			settextstyle(ButtonHighF, 0, _T("宋体"));
+			settextcolor(ButtonF);//设置文字颜色
+			BoolButton1 = false;
+		}
+		outtextxy(ButtonX, ButtonY + ButtonSpaceY * 0, _T("开始游戏"));
+
+		if (MousePlace(MouseX, MouseY, ButtonX, ButtonY + ButtonSpaceY * 1, ButtonX + ButtonWidth, ButtonY + ButtonSpaceY * 1 + ButtonHighF)) {//设置字体 =-= (设置)
+			settextstyle(ButtonHighT, 0, _T("宋体"));
+			settextcolor(ButtonT);//设置文字颜色
+			BoolButton2 = true;
+		}
+		else {
+			settextstyle(ButtonHighF, 0, _T("宋体"));
+			settextcolor(ButtonF);//设置文字颜色
+			BoolButton2 = false;
+		}
+		outtextxy(ButtonX, ButtonY + ButtonSpaceY * 1, _T("设置"));
+
+		if (MousePlace(MouseX, MouseY, ButtonX, ButtonY + ButtonSpaceY * 2, ButtonX + ButtonWidth, ButtonY + ButtonSpaceY * 2 + ButtonHighF)) {//设置字体 =-= (关于)
+			settextstyle(ButtonHighT, 0, _T("宋体"));
+			settextcolor(ButtonT);//设置文字颜色
+			BoolButton3 = true;
+		}
+		else {
+			settextstyle(ButtonHighF, 0, _T("宋体"));
+			settextcolor(ButtonF);//设置文字颜色
+			BoolButton3 = false;
+		}
+		outtextxy(ButtonX, ButtonY + ButtonSpaceY * 2, _T("关于"));
+
+		if (MousePlace(MouseX, MouseY, EndX, EndY, EndX + EndWidth, EndY + EndHighF)) {//设置字体 =-= (退出)
+			settextstyle(EndHighT, 0, _T("宋体"));
+			settextcolor(ButtonT);//设置文字颜色
+			BoolButton4 = true;
+		}
+		else {
+			settextstyle(EndHighF, 0, _T("宋体"));
+			settextcolor(ButtonF);//设置文字颜色
+			BoolButton4 = false;
+		}
 		outtextxy(EndX, EndY, _T("退出"));//输出文字
-		if (peekmessage(&Mouse, EX_MOUSE)) {//获取鼠标数据
-			if (Mouse.message == WM_MOUSEMOVE) {
-				MouseX = Mouse.x;//更新鼠标坐标
-				MouseY = Mouse.y;
+
+		settextstyle(15, 0, _T("宋体"));//打印鼠标坐标
+		outtextxy(0, 0, (std::to_wstring(MouseX) + L" " + std::to_wstring(MouseY)).c_str());
+		FlushBatchDraw();//将绘图从缓存中绘制到屏幕====================
+
+
+		if (Mouse.message == WM_LBUTTONDOWN) {//点击鼠标左键
+			if (BoolButton1) {//按钮1 开始游戏
+				if (gamestart()) {
+					YM = "gameon";//切换到游戏界面
+					return;
+				}
+				else {
+					MessageBox(GetHWnd(), _T("地图文件打开失败！"), _T("错误"), MB_OK | MB_ICONERROR);
+					Mouse.x = -1;
+					Mouse.y = -1;
+					//YM = "begin";//保持在初始界面
+					return;
+				}
 			}
-			if (Mouse.message == WM_LBUTTONDOWN) {//点击鼠标左键
-				if (MouseX >= ButtonX && MouseX <= ButtonX + ButtonWidth) {//当鼠标在按钮区域内
-					if (MouseY >= ButtonY + ButtonSpaceY * 0 && MouseY <= ButtonY + ButtonSpaceY * 0 + ButtonHigh) {//点击开始游戏
-						if (gamestart()) {
-							YM = "gameon";//切换到游戏界面
-							return;
-						}
-						else {
-							MessageBox(GetHWnd(), _T("地图文件打开失败！"), _T("错误"), MB_OK | MB_ICONERROR);
-							YM = "begin";//保持在初始界面
-							return;
-						}
-					}
-					else if (MouseY >= ButtonY + ButtonSpaceY * 1 && MouseY <= ButtonY + ButtonSpaceY * 1 + ButtonHigh) {//点击设置
-						YM = "set";//切换到设置界面
-						return;
-					}
-					else if (MouseY >= ButtonY + ButtonSpaceY * 2 && MouseY <= ButtonY + ButtonSpaceY * 2 + ButtonHigh) {//点击关于
-						YM = "about";//切换到关于界面
-						return;
-					}
-				}
-				if (MouseX >= EndX && MouseX <= EndX + EndWidth) {//当鼠标在退出按钮区域内
-					if (MouseY >= EndY && MouseY <= EndY + EndHigh) {//点击退出
-						BoolTheGame = false;//结束游戏主循环
-						return;
-					}
-				}
+			if (BoolButton2) {//按钮2 设置
+				YM = "set";//切换到设置界面
+				return;
+			}
+			if (BoolButton3) {//按钮3 关于
+				YM = "about";//切换到关于界面
+				return;
+			}
+			if (BoolButton4) {//按钮4 退出
+				BoolTheGame = false;//结束游戏主循环
+				return;
 			}
 		}
-		//settextstyle(25, 0, _T("宋体"));//打印鼠标坐标
-		//outtextxy(0, 0, (std::to_wstring(MouseX) + L" " + std::to_wstring(MouseY)).c_str());
-		FlushBatchDraw();//将绘图从缓存中绘制到屏幕
-		Sleep(10); //延时
+
+		Sleep(1); //延时
 		cleardevice();// 清屏
 	}
 }
