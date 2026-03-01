@@ -1,4 +1,73 @@
-﻿#include<iostream>
+﻿/*=========================================
+--- 项目名称: 冒险之路 --------------------
+--- 项目环境: windows C++11 ---------------
+--- 编译软件: Visual Studio ---------------
+-------------------------------------------
+--- 项目作者: 平凡0_0 ---------------------
+--- 哔哩哔哩: https://b23.tv/mGuvqJi ------
+--- 项目初创时间: 2026/1/23 ---------------
+--- 项目类型: 开源 ------------------------
+=========================================*/
+
+
+/*===============声明=========================================================================================
+--------------------------------------------------------------------------------------------------------------
+--- 本项目由 [平凡0_0] 原创制作 版权所有 ---------------------------------------------https://b23.tv/mGuvqJi--
+-------------------------------------------------------------------------------------------------------^^^----
+--- 任何个人或机构"可以"对其 复制 修改 用于商业盈利或通过信息网络进行传播 但使用时需完整注明作者及出处链接 ---
+--- 此项目为开源项目 任何组织和个人不可将其占为己有 ----------------------------------------------------------
+--- 此项目主要用于代码的交流与学习 --------------------------------------------------------------------------- 
+--------------------------------------------------------------------------------------------------------------
+============================================================================================================*/
+
+/*------ 版本概述 --------------------------------------------------------
+
+EasyX 库的使用
+	1.从 "graphics.h" 中引入 EasyX 库 
+	2.使用 EasyX 库创建窗口 绘制图像 显示文本 
+	3.使用 EasyX 库获取鼠标键盘输入 
+	4.使用 EasyX 库进行图像处理 
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	/*------ 版本概述 --------------------------------------------------------
+体验层面
+	1.玩家可以制作属于自己的地图 
+	2.多数时间格式 更为 json
+	3.代码环境变更 "Dev-C++" ---> "Visual Studio"
+	4.代码编码变更 "ANSI" ---> "UTF-8 BOM"
+	5.新添显示内容 位置 Last 与 next
+	6.新增错误与警告提示
+	7.新增错误与警告日志功能
+	8.新增错误与警告显示功能
+	9.地图数据缺失提示 避免游戏崩溃
+代码层面
+	1.存储地图数据结构改变
+	2.代码长度增加     <---废话
+	3.添加大量注释
+	4.代码结构改变     <---又是废话
+其他层面
+	1.地图编辑器(基本完工) 
+------------------------------------------------------------------------*/
+
+
+
+
+
+
+
+
+
+#include<iostream>
 #include<fstream>
 #include<string>
 #include<vector>
@@ -29,7 +98,7 @@ const std::string BeginMap = "冒险之路.json";//---------------初始的地�
 
 const std::string NULLTEXT = "无/Null";
 
-const int MapMaxSize = 55;//定义地图内存的大小 
+const int MapMaxSize = 105;//定义地图内存的大小 
 
 std::string YM;//显示的页面 
 
@@ -60,7 +129,7 @@ struct StructPlayer {//玩家信息
 struct StructTime {//时间信息
 	clock_t LastTime;//---------------上次时间
 	clock_t NowTime;//----------------现在时间
-	int JGTime;//---------------------间隔的时间 
+	int JGTime;//---------------------间隔的时间
 }Time;
 
 struct StructInput {//输入信息 
@@ -595,7 +664,7 @@ bool gamestart(){//<----------------------------------------------------------�
 	GameData("GDR",-1);//读取游戏数据
 	Player.PmX = (float)Player.myx;//玩家坐标
 	Player.PmY = (float)Player.myy;
-	const int Size = 500;
+	const int Size = 1000;
 	loadimage(&ImgWell, _T("Data/墙.jpg"), Size, Size);//加载图片
 	loadimage(&ImgPlayer, _T("Data/玩家.jpg"), Size, Size);//加载图片
 	loadimage(&ImgWell, _T("Data/墙.jpg"), Win.Size, Win.Size);//加载图片
@@ -710,10 +779,80 @@ void pmsx(){//<---------------------------------------------------------------�
 	outtextxy(0, 15, (L"" + std::to_wstring(Player.PmX) + L" " + std::to_wstring(Player.PmY)).c_str());
 
 	FlushBatchDraw();//将绘图从缓存中绘制到屏幕
-	//Sleep(10); //延时
 	cleardevice();// 清屏
 }
 
+bool IfMove(int x, int y) {//<-----------------------------------------------------------------------是否可以移动 
+	int num = Map.Data[y][x];//获取地图数据
+	if(num == 0 || num == 2 || num == 9){//可以通过
+		return true;
+	}
+	return false;
+}
+
+void PlayerMove(int xx, int yy, float Speed) {//<-----------------------------------------------------------------------玩家移动
+	const float ENum = 0.99999f;//误差值 用于修正坐标
+	//=========== X ==========
+	if (xx != 0) {//当玩家 X轴 移动时
+		float NowX = Player.PmX;//当前坐标 x
+		float ToX = Player.PmX + xx * Speed;//目标坐标 x
+		float NowY = Player.PmY;//当前坐标 y
+		if (Speed >= 1) {//当移动量大于等于1时 可能会跨格子
+			//Null
+		}
+		Player.PmX = ToX;//移动
+		if (xx < 0) {//左移动
+			if (!IfMove((int)ToX, (int)NowY) || !IfMove((int)ToX, (int)(NowY + ENum))) Player.PmX = (float)(int)(ToX + 1);//修正坐标
+		}
+		else {//右移动
+			if (!IfMove((int)(ToX + 1), (int)NowY) || !IfMove((int)(ToX + 1), (int)(NowY + ENum))) Player.PmX = (float)(int)ToX;//修正坐标
+		}
+		Player.LastX = Player.NextX;//经过坐标
+		Player.myx = (int)Player.PmX;//当前坐标
+		Player.CameraX = Player.PmX;//摄像机坐标
+		//if (xx > 0) Player.NextX = (int)Player.PmX + xx;//计算玩家的行动坐标
+		//else Player.NextX = (int)Player.PmX;
+		//settextstyle(15, 0, _T("宋体"));//打印鼠标坐标
+		//settextcolor(RGB(255, 255, 255));//设置文字颜色
+		//outtextxy(0, 30, (L"" + std::to_wstring((int)ToX) + L" " + std::to_wstring((int)NowY) + L" " + std::to_wstring((int)ToX) + L" " + std::to_wstring((int)(NowY + 0.99))).c_str());
+	}
+	//=========== Y ==========
+	if (yy != 0) {//当玩家 X轴 移动时
+		float NowY = Player.PmY;//当前坐标 x
+		float ToY = Player.PmY + yy * Speed;//目标坐标 x
+		float NowX = Player.PmX;//当前坐标 y
+		if (Speed >= 1) {//当移动量大于等于1时 可能会跨格子
+			//Null
+		}
+		Player.PmY = ToY;//移动
+		if (yy < 0) {//上移动
+			if (!IfMove((int)NowX, (int)ToY) || !IfMove((int)(NowX + ENum), (int)ToY)) Player.PmY = (float)(int)(ToY + 1);//修正坐标
+		}
+		else {//下移动
+			if (!IfMove((int)NowX, (int)(ToY + 1)) || !IfMove((int)(NowX + ENum), (int)(ToY + 1))) Player.PmY = (float)(int)ToY;//修正坐标
+		}
+		Player.LastY = Player.NextY;//经过坐标
+		Player.myy = (int)Player.PmY;//当前坐标
+		Player.CameraY = Player.PmY;//摄像机坐标
+		//if (yy > 0) Player.NextY = (int)Player.PmY + yy;
+		//else Player.NextY = (int)Player.PmY;
+		//settextstyle(15, 0, _T("宋体"));//打印鼠标坐标
+		//settextcolor(RGB(255, 255, 255));//设置文字颜色
+		//outtextxy(0, 30, (L"" + std::to_wstring((int)ToX) + L" " + std::to_wstring((int)NowY) + L" " + std::to_wstring((int)ToX) + L" " + std::to_wstring((int)(NowY + 0.99))).c_str());
+	}
+	//int num = Map.Data[Player.NextY][Player.NextX];//获取玩家行动坐标的地图数据
+	//if(num == 0 || num == 2 || num == 9){//当玩家行动坐标是否可以通过
+	//	Player.PmX += xx * Speed;//移动
+	//	Player.PmY += yy * Speed;
+	//	Player.LastX = Player.NextX;//经过坐标
+	//	Player.LastY = Player.NextY;
+	//	Player.myx = (int)Player.PmX;//当前坐标
+	//	Player.myy = (int)Player.PmY;
+
+	//	Player.CameraX = Player.PmX;//摄像机坐标
+	//	Player.CameraY = Player.PmY;
+	//}
+}
 
 void playerinput(){//<---------------------------------------------------玩家输入 
 	if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {//返回
@@ -721,28 +860,12 @@ void playerinput(){//<---------------------------------------------------玩家�
 		YM = "begin";//返回开始菜单
 	}
 	int xx=0,yy=0;//定义坐标变化量
-	if (GetAsyncKeyState(PlayerInput.up)    & 0x8000)yy--;//上
+	
 	if (GetAsyncKeyState(PlayerInput.left)  & 0x8000)xx--;//左
-	if (GetAsyncKeyState(PlayerInput.down)  & 0x8000)yy++;//下
 	if (GetAsyncKeyState(PlayerInput.right) & 0x8000)xx++;//右
-
-	if (xx > 0) Player.NextX = (int)Player.PmX + xx;//计算玩家的行动坐标
-	else Player.NextX = (int)Player.PmX;
-	if (yy > 0) Player.NextY = (int)Player.PmY + yy;
-	else Player.NextY = (int)Player.PmY;
-
-	int num = Map.Data[Player.NextY][Player.NextX];//获取玩家行动坐标的地图数据
-	if(num == 0 || num == 2 || num == 9){//当玩家行动坐标是否可以通过
-		Player.PmX += xx * Time.JGTime * Player.Speed / 1000;//移动
-		Player.PmY += yy * Time.JGTime * Player.Speed / 1000;
-		Player.LastX = Player.NextX;//经过坐标
-		Player.LastY = Player.NextY;
-		Player.myx = (int)Player.PmX;//当前坐标
-		Player.myy = (int)Player.PmY;
-
-		Player.CameraX = Player.PmX;//摄像机坐标
-		Player.CameraY = Player.PmY;
-	}
+	if (GetAsyncKeyState(PlayerInput.up)    & 0x8000)yy--;//上
+	if (GetAsyncKeyState(PlayerInput.down)  & 0x8000)yy++;//下
+	if (xx != 0 || yy != 0) PlayerMove(xx, yy, Player.Speed * Time.JGTime / 1000);//玩家移动
 
 	if (peekmessage(&Mouse, EX_MOUSE)) {//获取鼠标消息
 		if (Mouse.message == WM_MOUSEWHEEL) {//鼠标滚轮
@@ -752,8 +875,8 @@ void playerinput(){//<---------------------------------------------------玩家�
 			else {
 				Win.Size -= (int)(Win.Size * 0.2);
 			}
-			if (Win.Size > Win.WinY / 5) Win.Size = Win.WinY / 5;
-			if (Win.Size < Win.WinY / 100) Win.Size = Win.WinY / 100;
+			if (Win.Size > Win.WinY / 3) Win.Size = Win.WinY / 3;
+			if (Win.Size < Win.WinY / 120) Win.Size = Win.WinY / 120;
 		}
 	}
 }
@@ -869,7 +992,7 @@ void SaveData(int Week){//<-----------------------------------------------------
 	if(GameRunTime %Week == 0){//条件判定 
 		GameData("GDW",1);//保存游戏 
 	}
-} 
+}
 
 void TimeMath() {//<------------------------------------------------------------------时间计算
 	Time.LastTime = Time.NowTime;//赋值上次时间
@@ -909,24 +1032,22 @@ void YMBegin(){//<--------------------------------------------------------------
 	COLORREF ButtonT = RGB(255, 55, 55);
 	COLORREF ButtonF = RGB(255, 255, 255);
 
+	bool BoolButtonEnd = false;
 	bool BoolButton1 = false;
 	bool BoolButton2 = false;
 	bool BoolButton3 = false;
-	bool BoolButton4 = false;
 
 	bool BoolMouseLife = false;
 
 	class C {
 	public:
-		bool ButtonStyle1(COLORREF ButtonColorT, int ButtonSizeT, COLORREF ButtonColorF, int ButtonSizeF, bool BoolClick) {
-			if (BoolClick) {
-				settextstyle(ButtonSizeT, 0, _T("宋体"));
-				settextcolor(ButtonColorT);//设置文字颜色
-			}
-			else {
-				settextstyle(ButtonSizeF, 0, _T("宋体"));
-				settextcolor(ButtonColorF);//设置文字颜色
-			}
+		void TextStyle1(COLORREF ButtonColor, int ButtonSize) {
+			settextstyle(ButtonSize, 0, _T("宋体"));
+			settextcolor(ButtonColor);//设置文字颜色
+		}
+		bool ButtonStyle1(COLORREF ColorT, int SizeT, COLORREF ColorF, int SizeF, bool BoolClick) {
+			if (BoolClick) TextStyle1(ColorT, SizeT);
+			else TextStyle1(ColorF, SizeF);
 			return BoolClick;
 		}
 	}Object;
@@ -956,7 +1077,7 @@ void YMBegin(){//<--------------------------------------------------------------
 		BoolButton3 = Object.ButtonStyle1(ButtonT, ButtonHighT, ButtonF, ButtonHighF, MousePlace(MouseX, MouseY, ButtonX, ButtonY + ButtonSpaceY * 2, ButtonX + ButtonWidth, ButtonY + ButtonSpaceY * 2 + ButtonHighF));
 		outtextxy(ButtonX, ButtonY + ButtonSpaceY * 2, _T("关于"));
 		//设置字体 =-= (退出)
-		BoolButton4 = Object.ButtonStyle1(ButtonT, EndHighT, ButtonF, EndHighF, MousePlace(MouseX, MouseY, EndX, EndY, EndX + EndWidth, EndY + EndHighF));
+		BoolButtonEnd = Object.ButtonStyle1(ButtonT, EndHighT, ButtonF, EndHighF, MousePlace(MouseX, MouseY, EndX, EndY, EndX + EndWidth, EndY + EndHighF));
 		outtextxy(EndX, EndY, _T("退出"));//输出文字
 
 		settextstyle(15, 0, _T("宋体"));//打印鼠标坐标
@@ -986,7 +1107,7 @@ void YMBegin(){//<--------------------------------------------------------------
 				YM = "about";//切换到关于界面
 				return;
 			}
-			if (BoolButton4) {//按钮4 退出
+			if (BoolButtonEnd) {//按钮4 退出
 				BoolTheGame = false;//结束游戏主循环
 				return;
 			}
@@ -998,7 +1119,98 @@ void YMBegin(){//<--------------------------------------------------------------
 }
 
 void YMSet(){//<--------------------------------------------------------------------设置界面
-	
+	int TitleHigh = Win.WinY / 15;// ===== Title
+	int TitleX = Win.WinX / 2 - Win.WinX / 4;
+	int TitleY = Win.WinY / 20;
+	int ButtonHighT = Win.WinY / 20 + 5;// ===== Button
+	int ButtonHighF = Win.WinY / 20;
+	int ButtonWidth = 120;
+	int ButtonX = Win.WinX / 8;
+	int ButtonY = Win.WinY / 5;
+	int ButtonSpaceY = Win.WinY / 10;
+	int EndHighT = ButtonHighT;// ===== End
+	int EndHighF = ButtonHighF;
+	int EndWidth = ButtonWidth;
+	int EndX = ButtonX;
+	int EndY = Win.WinY - Win.WinY / 10 - EndHighF;
+
+	COLORREF ButtonT = RGB(255, 55, 55);
+	COLORREF ButtonF = RGB(255, 255, 255);
+
+	bool BoolButtonEnd = false;
+	bool BoolButton1 = false;
+	bool BoolButton2 = false;
+	bool BoolButton3 = false;
+
+	bool BoolMouseLife = false;
+
+	class C {
+	public:
+		void TextStyle1(COLORREF ButtonColor, int ButtonSize) {
+			settextstyle(ButtonSize, 0, _T("宋体"));
+			settextcolor(ButtonColor);//设置文字颜色
+		}
+		bool ButtonStyle1(COLORREF ColorT, int SizeT, COLORREF ColorF, int SizeF, bool BoolClick) {
+			if (BoolClick) TextStyle1(ColorT, SizeT);
+			else TextStyle1(ColorF, SizeF);
+			return BoolClick;
+		}
+	}Object;
+
+	while (1) {
+		BoolMouseLife = (Mouse.message == WM_LBUTTONDOWN);
+
+		peekmessage(&Mouse, EX_MOUSE);
+
+		//获取鼠标数据
+		MouseX = Mouse.x;//更新鼠标坐标
+		MouseY = Mouse.y;
+
+		BeginBatchDraw();//将绘图保存在缓存中====================
+		std::wstring text;
+		settextstyle(TitleHigh, 0, _T("宋体"));//设置字体 ===== Title
+		settextcolor(RGB(255, 255, 0));//设置文字颜色
+		outtextxy(TitleX, TitleY, _T("设置"));//输出文字
+		// ===== Button
+		//设置字体 =-= (开始游戏)
+		BoolButton1 = Object.ButtonStyle1(ButtonT, ButtonHighT, ButtonF, ButtonHighF, MousePlace(MouseX, MouseY, ButtonX, ButtonY + ButtonSpaceY * 0, ButtonX + ButtonWidth, ButtonY + ButtonSpaceY * 0 + ButtonHighF));
+		outtextxy(ButtonX, ButtonY + ButtonSpaceY * 0, _T("设置"));
+		//设置字体 =-= (设置)
+		BoolButton2 = Object.ButtonStyle1(ButtonT, ButtonHighT, ButtonF, ButtonHighF, MousePlace(MouseX, MouseY, ButtonX, ButtonY + ButtonSpaceY * 1, ButtonX + ButtonWidth, ButtonY + ButtonSpaceY * 1 + ButtonHighF));
+		outtextxy(ButtonX, ButtonY + ButtonSpaceY * 1, _T("设置"));
+		//设置字体 =-= (关于)
+		BoolButton3 = Object.ButtonStyle1(ButtonT, ButtonHighT, ButtonF, ButtonHighF, MousePlace(MouseX, MouseY, ButtonX, ButtonY + ButtonSpaceY * 2, ButtonX + ButtonWidth, ButtonY + ButtonSpaceY * 2 + ButtonHighF));
+		outtextxy(ButtonX, ButtonY + ButtonSpaceY * 2, _T("设置"));
+		//设置字体 =-= (返回)
+		BoolButtonEnd = Object.ButtonStyle1(ButtonT, EndHighT, ButtonF, EndHighF, MousePlace(MouseX, MouseY, EndX, EndY, EndX + EndWidth, EndY + EndHighF));
+		outtextxy(EndX, EndY, _T("返回"));//输出文字
+
+		settextstyle(15, 0, _T("宋体"));//打印鼠标坐标
+		outtextxy(0, 0, (std::to_wstring(MouseX) + L" " + std::to_wstring(MouseY)).c_str());
+		FlushBatchDraw();//将绘图从缓存中绘制到屏幕====================
+
+
+		if (Mouse.message == WM_LBUTTONDOWN && !BoolMouseLife) {//点击鼠标左键
+			if (BoolButton1) {//按钮1 
+
+			}
+			if (BoolButton2) {//按钮2 
+				YM = "set";//切换到设置界面
+				return;
+			}
+			if (BoolButton3) {//按钮3
+				YM = "about";//切换到关于界面
+				return;
+			}
+
+			if (BoolButtonEnd) {//按钮 返回
+				YM = "begin";//切换到初始界面
+				return;
+			}
+		}
+		Sleep(1); //延时
+		cleardevice();// 清屏
+	}
 }
 
 void YMAbout() {//<------------------------------------------------------------------关于界面
@@ -1022,26 +1234,20 @@ void YMAbout() {//<-------------------------------------------------------------
 	COLORREF ButtonF = RGB(255, 255, 255);
 	COLORREF TextColor1 = RGB(255, 255, 255);
 
-	bool BoolButton1 = false;
+	bool BoolButtonEnd = false;
 
 	bool BoolMouseLife = false;
 
 	class C {
 	public:
-		bool ButtonStyle1(COLORREF ButtonColorT, int ButtonSizeT, COLORREF ButtonColorF, int ButtonSizeF, bool BoolClick) {
-			if (BoolClick) {
-				settextstyle(ButtonSizeT, 0, _T("宋体"));
-				settextcolor(ButtonColorT);//设置文字颜色
-			}
-			else {
-				settextstyle(ButtonSizeF, 0, _T("宋体"));
-				settextcolor(ButtonColorF);//设置文字颜色
-			}
-			return BoolClick;
-		}
 		void TextStyle1(COLORREF ButtonColor, int ButtonSize) {
 			settextstyle(ButtonSize, 0, _T("宋体"));
 			settextcolor(ButtonColor);//设置文字颜色
+		}
+		bool ButtonStyle1(COLORREF ColorT, int SizeT, COLORREF ColorF, int SizeF, bool BoolClick) {
+			if (BoolClick) TextStyle1(ColorT, SizeT);
+			else TextStyle1(ColorF, SizeF);
+			return BoolClick;
 		}
 	}Object;
 
@@ -1064,7 +1270,7 @@ void YMAbout() {//<-------------------------------------------------------------
 		Object.TextStyle1(TextColor1, TextHigh);
 		outtextxy(TextX, TextY + TextSpaceY * 1, _T("想不到还有什么可以写了"));
 
-		BoolButton1 = Object.ButtonStyle1(ButtonT, EndHighT, ButtonF, EndHighF, MousePlace(MouseX, MouseY, EndX, EndY, EndX + EndWidth, EndY + EndHighF));
+		BoolButtonEnd = Object.ButtonStyle1(ButtonT, EndHighT, ButtonF, EndHighF, MousePlace(MouseX, MouseY, EndX, EndY, EndX + EndWidth, EndY + EndHighF));
 		outtextxy(EndX, EndY, _T("返回"));//输出文字
 
 		settextstyle(15, 0, _T("宋体"));//打印鼠标坐标
@@ -1073,7 +1279,7 @@ void YMAbout() {//<-------------------------------------------------------------
 
 
 		if (Mouse.message == WM_LBUTTONDOWN && !BoolMouseLife) {//点击鼠标左键
-			if (BoolButton1) {//按钮1 返回
+			if (BoolButtonEnd) {//按钮1 返回
 				YM = "begin";//切换到初始界面
 				return;
 			}
