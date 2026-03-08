@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="源文件\source">
+      <UniqueIdentifier>{9693e421-ab08-44e4-8d60-ad2844a7d4de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\source\Data">
+      <UniqueIdentifier>{46f6f0b3-d239-4441-9f8b-7d3a8ef14af7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\source">
+      <UniqueIdentifier>{13dfab49-3314-4392-b725-33851d78db74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\source\Data">
+      <UniqueIdentifier>{22090e4e-4abc-44b9-aa5b-5348ef8f8c19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\source\Game">
+      <UniqueIdentifier>{838f36e5-6691-4fc1-ae58-6f362414bb8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\source\Game">
+      <UniqueIdentifier>{f0a88a11-6de4-4d4d-a235-80b661ec7b43}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Begin.cpp">
+      <Filter>源文件\source</Filter>
+    </ClCompile>
+    <ClCompile Include="GameData.cpp">
+      <Filter>源文件\source\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug.cpp">
+      <Filter>源文件\source</Filter>
+    </ClCompile>
+    <ClCompile Include="TypeConversion.cpp">
+      <Filter>源文件\source</Filter>
+    </ClCompile>
+    <ClCompile Include="PageDisplay.cpp">
+      <Filter>源文件\source</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerInput.cpp">
+      <Filter>源文件\source</Filter>
+    </ClCompile>
+    <ClCompile Include="GameRun.cpp">
+      <Filter>源文件\source\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="GamePageDisplay.cpp">
+      <Filter>源文件\source\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameLife.cpp">
+      <Filter>源文件\source\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>源文件\source</Filter>
+    </ClCompile>
+    <ClCompile Include="GameInput.cpp">
+      <Filter>源文件\source\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="GamePlayerMove.cpp">
+      <Filter>源文件\source\Game</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Begin.h">
+      <Filter>头文件\source</Filter>
+    </ClInclude>
+    <ClInclude Include="GameData.h">
+      <Filter>头文件\source\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug.h">
+      <Filter>头文件\source</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>头文件\source</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeConversion.h">
+      <Filter>头文件\source</Filter>
+    </ClInclude>
+    <ClInclude Include="PageDisplay.h">
+      <Filter>头文件\source</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerInput.h">
+      <Filter>头文件\source</Filter>
+    </ClInclude>
+    <ClInclude Include="GameRun.h">
+      <Filter>头文件\source\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="GamePageDisplay.h">
+      <Filter>头文件\source\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameLife.h">
+      <Filter>头文件\source\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Time.h">
+      <Filter>头文件\source</Filter>
+    </ClInclude>
+    <ClInclude Include="GameInput.h">
+      <Filter>头文件\source\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="GamePlayerMove.h">
+      <Filter>头文件\source\Game</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
