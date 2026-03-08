@@ -4,9 +4,9 @@
 + 哔哩哔哩: https://space.bilibili.com/3493106011867428
 
 
-- 项目环境: windows C++14
+- 项目环境: windows C++20
 - 编译软件: Visual Studio
-- 使用说明: 点击 **冒险之路.slnx** 文件即可打开VS项目 
+- 使用说明: 点击 **RoadOfAdventure.slnx** 文件即可打开VS项目
 
 
 + 项目初创时间: 2026/2/13
