@@ -31,6 +31,12 @@
     <Filter Include="头文件\source\Game">
       <UniqueIdentifier>{f0a88a11-6de4-4d4d-a235-80b661ec7b43}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\source\Game\Unit">
+      <UniqueIdentifier>{9c022034-dbb6-4641-9454-3e8320f9f502}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\source\Game\Unit">
+      <UniqueIdentifier>{bd31a900-0bbc-4e64-ac9d-67788bf4bd6f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -71,6 +77,12 @@
     </ClCompile>
     <ClCompile Include="GamePlayerMove.cpp">
       <Filter>源文件\source\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameUnit.cpp">
+      <Filter>源文件\source\Game\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="GameUnit.h">
+      <Filter>头文件\source\Game\Unit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

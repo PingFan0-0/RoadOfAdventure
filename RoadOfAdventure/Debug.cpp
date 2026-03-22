@@ -14,13 +14,8 @@ void Debug(std::string str) {//<------------------------------------------------
 		if (!BoolDebug) DubugOut << "\n日志以记录关闭 可以在设置中打开此功能\n";
 		return;//退出 
 	}
-	std::string strr; //定义文本 
-	strr += "\n";//写入换行 
-	double NowTime = clock();//获取程序运行时间 
-	strr += "[" + std::to_string(NowTime / 1000) + "] ";//写入时间 
-	strr += str;//写入Debug  
 	std::ofstream DubugOut(DebugWay, std::ios::app);
-	DubugOut << strr;//写入文件 
+	DubugOut << "\n[" + std::to_string((float)clock() / 1000) + "] " + str;//写入文件 
 }
 
 void DebugError(std::string str) {//<---------------------------------------------------------错误日志 
@@ -31,13 +26,8 @@ void DebugError(std::string str) {//<-------------------------------------------
 		if (!BoolDebug) DubugOut << "\n错误日志以记录关闭 可以在设置中打开此功能";
 		return;//退出 
 	}
-	std::string strr;//定义文本
-	strr += "\n";//写入换行
-	double NowTime = clock();//获取程序运行时间
-	strr += "[" + std::to_string(NowTime / 1000) + "] ";//写入时间
-	strr += str;//写入DebugError
 	std::ofstream DubugOut(ErrorWay, std::ios::app);//打开文件
-	DubugOut << strr;//写入文件
+	DubugOut << "\n[" + std::to_string((float)clock() / 1000) + "] " + str;;//写入文件
 }
 
 void DebugWarn(std::string str) {//<---------------------------------------------------------警告日志
@@ -48,13 +38,8 @@ void DebugWarn(std::string str) {//<--------------------------------------------
 		if (!BoolDebug) DubugOut << "\n警告日志以记录关闭 可以在设置中打开此功能";
 		return;//退出
 	}
-	std::string strr;//定义文本
-	strr += "\n";////写入换行
-	double NowTime = clock();//获取程序运行时间
-	strr += "[" + std::to_string(NowTime / 1000) + "] ";//写入时间
-	strr += str;//写入DebugWarn
 	std::ofstream DubugOut(WarnWay, std::ios::app);//打开文件
-	DubugOut << strr;//写入文件
+	DubugOut << "\n[" + std::to_string((float)clock() / 1000) + "] " + str;;//写入文件
 }
 
 void Error(const std::string Text, const std::string Type) {//<----------------------------------------------------错误显示

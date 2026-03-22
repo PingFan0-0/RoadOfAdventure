@@ -10,11 +10,12 @@ std::string wstring_string(std::wstring wstr) {//-------------------------------
 	return strr;
 }
 
-std::wstring to_wstring(const std::string str) {//------------------------------------------- string --> wstring   (来自AI)
-	if (str.empty()) return std::wstring();
-	int len = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), NULL, 0);
-	std::wstring wstr(len, 0);
-	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), &wstr[0], len);
+std::wstring to_wstring(const std::string gbkstr) {//------------------------------------------- string --> wstring   (来自AI)
+	if (gbkstr.empty()) return std::wstring();
+	// CP_ACP 表示当前系统默认 ANSI 代码页（简体中文即为 GBK）
+	int size_needed = MultiByteToWideChar(CP_ACP, 0, gbkstr.data(), (int)gbkstr.size(), NULL, 0);
+	std::wstring wstr(size_needed, 0);
+	MultiByteToWideChar(CP_ACP, 0, gbkstr.data(), (int)gbkstr.size(), &wstr[0], size_needed);
 	return wstr;
 }
 

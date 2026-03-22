@@ -1,0 +1,10 @@
+{
+	"name": "NPC",
+	"type": "unit",
+	"F": 500,
+	"M": 50,
+	"life": 100,
+	"sizex": 0.5,
+	"sizey": 0.5,
+	"introduction": "null"
+}

@@ -4,7 +4,7 @@
 #include<string>
 #include<graphics.h>
 #include"json.hpp"
-
+#include<vector>
 
 
 extern const std::wstring DataWayParent;//-----文件夹路径 游戏数据
@@ -13,6 +13,7 @@ extern const std::wstring DataParent;//--------文件夹路径 数据
 
 extern const std::wstring MapParent;//---------文件夹路径 地图
 extern const std::wstring ImageParent;//-------文件夹路径 图片
+extern const std::wstring InformationParent;//-文件夹路径 图片
 
 extern const std::string GameDataWay;//------文件名称 游戏数据
 extern const std::string SetDataWay;//-------文件名称 设置数据
@@ -30,7 +31,8 @@ extern bool BoolTheGame;//---------游戏是否运行
 extern bool BoolDebug;//-----------日志Debug是否开启 
 extern bool BoolZbxs;//------------坐标显示是否开启  
 extern bool BoolGameRunTime;//-----游戏时刻显示是否开启  
-extern bool BoolFPS;//-------------FPS显示是否开启 
+extern bool BoolFPS;//-------------FPS显示是否开启  
+extern bool BoolVxs;//-------------速度显示是否开启 
 extern bool BoolMapMessage;//------地图信息显示是否开启  
 extern bool BoolWarn;//------------是否显示警告状态 
 
@@ -40,23 +42,25 @@ extern long long GameRunTime;//-----游戏时刻
 
 
 struct StructPlayer {//玩家信息
-	int LastX, LastY;//---------玩家上次的位置
-	int NextX, NextY;//---------玩家行动的位置
-	int myx, myy;//-------------玩家位置
 	float CameraX, CameraY;//---摄像机位置
-	float PmX, PmY;//-----------显示的坐标
-	float Life;//---------------玩家生命
-	float MaxLife;//------------玩家最大生命
-	float Speed;//--------------玩家速度
 	std::string MapName;//------当前地图
+	int Player;//---------------角色
 };extern StructPlayer Player;
+
+struct MapData {//地图数据 
+	uint16_t floor;//-----地面
+	uint16_t wall;//------墙壁
+	//std::string object;//----物体
+};
 
 struct SM {//StructMap 的缩写 地图信息 
 	int maxx, maxy;//-------地图大小
 	std::string wjname;//---文件名字
 	std::string name;//-----地图名字
 	std::string Author = NULLTEXT;//地图作者
-	int Data[MapMaxSize][MapMaxSize];//地图数据
+	
+	std::vector<MapData> Data;
+	//int Data[MapMaxSize][MapMaxSize];//地图数据
 	struct SJData {//事件数据
 		int SJNum;//特殊事件数量 
 		int CSNum;//传送事件数量 
@@ -92,16 +96,66 @@ struct StructWin {//窗口信息
 	int LastSize;//上次每个格子的像素大小
 };extern StructWin Win;
 
-struct StructImage {//图片信息 
-	std::wstring Name;//图片名字 
-	std::wstring Way;//图片路径
-	IMAGE Img;//图片数据
-}; extern StructImage Images[21];
+//struct StructImage {//图片信息 
+//	std::string imageway;//图片路径
+//	IMAGE image;//图片数据
+//};
+//extern std::vector <StructImage> ImageData;//建筑数据
+
+struct StructCentralData {//中心数据
+	struct CentralData {//数据-----
+		std::string name;//名字
+		std::string type;//类型
+		uint32_t Hand;//指针
+		std::string dataway;//数据路径
+	};
+	struct StructImage {//图片信息-----
+		std::string imageway;//图片路径
+		IMAGE image;//图片数据
+	};
+	struct StructBack {//背景数据-----
+		uint8_t sizex;//x
+		uint8_t sizey;//y
+		uint16_t ImageHand;//贴图指针
+	};
+	struct StructBuilding {//建筑数据-----
+		uint8_t sizex;//x
+		uint8_t sizey;//y
+		uint16_t ImageHand;//贴图指针
+	};
+	struct StructUnit {//单位数据-----
+		std::string Name;//名字
+		float sizex;//x
+		float sizey;//y
+		float Life;//血条
+		float F;//牵引力
+		float M;//质量
+		uint16_t ImageHand;//贴图指针
+	};
+	struct StructWall {//墙数据-----
+		uint8_t sizex;//x
+		uint8_t sizey;//y
+		uint16_t ImageHand;//贴图指针
+	};
+	struct StructItem {//物品数据-----
+		std::string Name;
+		std::string Introduction;
+		uint16_t ImageHand;//贴图指针
+	};
+	std::vector <CentralData> Data;//数据
+	std::vector <StructImage> ImageData;//图像数据
+	std::vector <StructBack> BackData;//背景数据
+	std::vector <StructBuilding> BuildingData;//建筑数据
+	std::vector <StructUnit> UnitData;//单位数据
+	std::vector <StructWall> WallData;//墙数据
+	std::vector <StructItem> ItemData;//物品数据
+}; extern StructCentralData CentralData;
 
 struct StructTime {//时间信息
 	clock_t LastTime;//---------------上次时间
 	clock_t NowTime;//----------------现在时间
-	int JGTime;//---------------------间隔的时间
+	float JGTime;//---------------------间隔的时间
+	int FPS;//
 }; extern StructTime Time;
 
 struct StructInput {//输入信息 
@@ -129,9 +183,17 @@ extern int WarnNum;//警告数量
 
 void CDW(const std::wstring& str);//<---------------------------------------------------------------------创建文件夹
 bool FFFW(const std::wstring& str, const std::string FindMapName);//<-------------------------------------获取文件
+std::string FindFile(const std::wstring& str, const std::string FindName);//<-----------------------------查找文件
+/**/struct FileData {std::string name;std::string way;};//文件数据--->name:文件名字 way:文件路径--\|/
+std::vector <FileData> FindFileAll(const std::wstring& str);//<-------------------------------------------查找所有文件
+std::vector <FileData> FindJsonAll(const std::wstring& str);//<-------------------------------------------查找所有Json文件
 
 void czdata(std::string xz);//<---------------------------------------------------------------------------重置数据 
 void GameData(std::string xz, int num);//<----------------------------------------------------------------保存/读取游戏数据
 
-bool OpenJson(const std::string WJWay, const std::string WJName, nlohmann::json& jsin);//<----------------打开JSON 分析
+int to_MapHand(int x, int y);//<--------------------------------------------------------------------------坐标转换为地图数据序号
+bool OpenJson(const std::string Way, const std::string WJName, nlohmann::json& jsin);//<------------------打开JSON 分析
+int FindData(std::string name);//-------------------------------------------------------------------------寻找中心数据
+int FindUnitData(std::string name);//---------------------------------------------------------------------寻找Unit数据
 bool GameMapData(std::string mapname);//<-----------------------------------------------------------------读取地图文件 
+void GameMapDataClear();//<-------------------------------------------------------------------------------清空地图数据 

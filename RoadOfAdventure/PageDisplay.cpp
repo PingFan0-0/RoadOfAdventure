@@ -16,6 +16,7 @@ void ymxs() {//<---------------------------------------------------------页面�
 	if (YM == "begin")  YMBegin();//初始界面
 	if (YM == "gameon") YMGameRun();//游戏页面
 	if (YM == "set")    YMSet();//设置页面
+	if (YM == "setgame")YMSetGame();//设置 - game界面
 	if (YM == "about")  YMAbout();//关于页面.
 
 
@@ -343,15 +344,15 @@ void YMSet() {//<---------------------------------------------------------------
 		settextcolor(RGB(255, 255, 0));//设置文字颜色
 		outtextxy(TitleX, TitleY, _T("设置"));//输出文字
 		// ===== Button
-		//设置字体 =-= (开始游戏)
+		//设置字体 =-= (游戏)
 		BoolButton1 = Object.ButtonStyle1(ButtonT, ButtonHighT, ButtonF, ButtonHighF, MousePlace(MouseX, MouseY, ButtonX, ButtonY + ButtonSpaceY * 0, ButtonX + ButtonWidth, ButtonY + ButtonSpaceY * 0 + ButtonHighF));
-		outtextxy(ButtonX, ButtonY + ButtonSpaceY * 0, _T("设置"));
+		outtextxy(ButtonX, ButtonY + ButtonSpaceY * 0, _T("游戏设置"));
 		//设置字体 =-= (设置)
 		BoolButton2 = Object.ButtonStyle1(ButtonT, ButtonHighT, ButtonF, ButtonHighF, MousePlace(MouseX, MouseY, ButtonX, ButtonY + ButtonSpaceY * 1, ButtonX + ButtonWidth, ButtonY + ButtonSpaceY * 1 + ButtonHighF));
-		outtextxy(ButtonX, ButtonY + ButtonSpaceY * 1, _T("设置"));
+		outtextxy(ButtonX, ButtonY + ButtonSpaceY * 1, _T("null"));
 		//设置字体 =-= (关于)
 		BoolButton3 = Object.ButtonStyle1(ButtonT, ButtonHighT, ButtonF, ButtonHighF, MousePlace(MouseX, MouseY, ButtonX, ButtonY + ButtonSpaceY * 2, ButtonX + ButtonWidth, ButtonY + ButtonSpaceY * 2 + ButtonHighF));
-		outtextxy(ButtonX, ButtonY + ButtonSpaceY * 2, _T("设置"));
+		outtextxy(ButtonX, ButtonY + ButtonSpaceY * 2, _T("null"));
 		//设置字体 =-= (返回)
 		BoolButtonEnd = Object.ButtonStyle1(ButtonT, EndHighT, ButtonF, EndHighF, MousePlace(MouseX, MouseY, EndX, EndY, EndX + EndWidth, EndY + EndHighF));
 		outtextxy(EndX, EndY, _T("返回"));//输出文字
@@ -363,25 +364,159 @@ void YMSet() {//<---------------------------------------------------------------
 
 		if (Mouse.message == WM_LBUTTONDOWN && !BoolMouseLife) {//点击鼠标左键
 			if (BoolButton1) {//按钮1 
-
+				YM = "setgame";//切换到设置 - game
+				return;
 			}
 			if (BoolButton2) {//按钮2 
-				YM = "set";//切换到设置界面
-				return;
+				//YM = "set";//切换到设置界面
+				//return;
 			}
 			if (BoolButton3) {//按钮3
-				YM = "about";//切换到关于界面
-				return;
+				//YM = "about";//切换到关于界面
+				//return;
 			}
 
 			if (BoolButtonEnd) {//按钮 返回
 				YM = "begin";//切换到初始界面
+				GameData("SDW", 1);
 				return;
 			}
 		}
 		Sleep(1); //延时
 		cleardevice();// 清屏
 	}
+}
+
+void YMSetGame() {//<--------------------------------------------------------------------设置 - game界面
+	int TitleHigh = Win.WinY / 15;// ===== Title
+	int TitleX = Win.WinX / 2 - Win.WinX / 4;
+	int TitleY = Win.WinY / 20;
+	int ButtonHighT = Win.WinY / 20 + 5;// ===== Button
+	int ButtonHighF = Win.WinY / 20;
+	int ButtonWidth = 120;
+	int ButtonXL = Win.WinX / 8;
+	int ButtonXR = Win.WinX - Win.WinX / 5;
+	int ButtonY = Win.WinY / 5;
+	int ButtonSpaceY = Win.WinY / 10;
+	int EndHighT = ButtonHighT;// ===== End
+	int EndHighF = ButtonHighF;
+	int EndWidth = ButtonWidth;
+	int EndX = ButtonXL;
+	int EndY = Win.WinY - Win.WinY / 10 - EndHighF;
+
+	COLORREF ButtonT = RGB(255, 55, 55);
+	COLORREF ButtonF = RGB(255, 255, 255);
+
+	bool BoolButtonEnd = false;
+	bool BoolButton1 = false;
+	bool BoolButton2 = false;
+	bool BoolButton3 = false;
+
+	bool BoolMouseLife = false;
+
+	class C {
+	public:
+		void TextStyle1(COLORREF ButtonColor, int ButtonSize) {
+			settextstyle(ButtonSize, 0, _T("宋体"));
+			settextcolor(ButtonColor);//设置文字颜色
+		}
+		bool ButtonStyle1(COLORREF ColorT, int SizeT, COLORREF ColorF, int SizeF, bool BoolClick) {
+			if (BoolClick) TextStyle1(ColorT, SizeT);
+			else TextStyle1(ColorF, SizeF);
+			return BoolClick;
+		}
+	}Object;
+
+	while (1) {
+		BoolMouseLife = (Mouse.message == WM_LBUTTONDOWN);
+
+		peekmessage(&Mouse, EX_MOUSE);
+
+		//获取鼠标数据
+		MouseX = Mouse.x;//更新鼠标坐标
+		MouseY = Mouse.y;
+
+		BeginBatchDraw();//将绘图保存在缓存中====================
+		std::wstring text;
+		settextstyle(TitleHigh, 0, _T("宋体"));//设置字体 ===== Title
+		settextcolor(RGB(255, 255, 0));//设置文字颜色
+		outtextxy(TitleX, TitleY, _T("设置 - 游戏"));//输出文字
+		// ===== Button
+		int i = 0;
+		std::wstring wstr;
+		//设置字体 =-= (FPS显示)
+		BoolButton1 = Object.ButtonStyle1(ButtonT, ButtonHighT, ButtonF, ButtonHighF, MousePlace(MouseX, MouseY, ButtonXL, ButtonY + ButtonSpaceY * 0, ButtonXL + ButtonWidth, ButtonY + ButtonSpaceY * 0 + ButtonHighF));
+		outtextxy(ButtonXL, ButtonY + ButtonSpaceY * i, _T("FPS显示"));//0
+		wstr = BoolFPS ? L"当前:开" : L"当前:关";
+		outtextxy(ButtonXR, ButtonY + ButtonSpaceY * i, wstr.c_str());
+		i++;
+		//设置字体 =-= (坐标显示)
+		BoolButton2 = Object.ButtonStyle1(ButtonT, ButtonHighT, ButtonF, ButtonHighF, MousePlace(MouseX, MouseY, ButtonXL, ButtonY + ButtonSpaceY * 1, ButtonXL + ButtonWidth, ButtonY + ButtonSpaceY * 1 + ButtonHighF));
+		outtextxy(ButtonXL, ButtonY + ButtonSpaceY * i, _T("坐标显示"));//1
+		wstr = BoolZbxs ? L"当前:开" : L"当前:关";
+		outtextxy(ButtonXR, ButtonY + ButtonSpaceY * i, wstr.c_str());
+		i++;
+		//设置字体 =-= (速度显示)
+		BoolButton3 = Object.ButtonStyle1(ButtonT, ButtonHighT, ButtonF, ButtonHighF, MousePlace(MouseX, MouseY, ButtonXL, ButtonY + ButtonSpaceY * 2, ButtonXL + ButtonWidth, ButtonY + ButtonSpaceY * 2 + ButtonHighF));
+		outtextxy(ButtonXL, ButtonY + ButtonSpaceY * i, _T("速度显示"));//2
+		wstr = BoolVxs ? L"当前:开" : L"当前:关";
+		outtextxy(ButtonXR, ButtonY + ButtonSpaceY * i, wstr.c_str());
+		i++;
+		//设置字体 =-= (null)
+		BoolButton3 = Object.ButtonStyle1(ButtonT, ButtonHighT, ButtonF, ButtonHighF, MousePlace(MouseX, MouseY, ButtonXL, ButtonY + ButtonSpaceY * 2, ButtonXL + ButtonWidth, ButtonY + ButtonSpaceY * 2 + ButtonHighF));
+		outtextxy(ButtonXL, ButtonY + ButtonSpaceY * i, _T("null"));//3
+		i++;
+		//设置字体 =-= (null)
+		BoolButton3 = Object.ButtonStyle1(ButtonT, ButtonHighT, ButtonF, ButtonHighF, MousePlace(MouseX, MouseY, ButtonXL, ButtonY + ButtonSpaceY * 2, ButtonXL + ButtonWidth, ButtonY + ButtonSpaceY * 2 + ButtonHighF));
+		outtextxy(ButtonXL, ButtonY + ButtonSpaceY * i, _T("null"));//4
+		i++;
+		//设置字体 =-= (null)
+		BoolButton3 = Object.ButtonStyle1(ButtonT, ButtonHighT, ButtonF, ButtonHighF, MousePlace(MouseX, MouseY, ButtonXL, ButtonY + ButtonSpaceY * 2, ButtonXL + ButtonWidth, ButtonY + ButtonSpaceY * 2 + ButtonHighF));
+		outtextxy(ButtonXL, ButtonY + ButtonSpaceY * i, _T("null"));//5
+		i++;
+		//设置字体 =-= (null)
+		BoolButton3 = Object.ButtonStyle1(ButtonT, ButtonHighT, ButtonF, ButtonHighF, MousePlace(MouseX, MouseY, ButtonXL, ButtonY + ButtonSpaceY * 2, ButtonXL + ButtonWidth, ButtonY + ButtonSpaceY * 2 + ButtonHighF));
+		outtextxy(ButtonXL, ButtonY + ButtonSpaceY * i, _T("null"));//6
+		i++;
+		//设置字体 =-= (返回)
+		BoolButtonEnd = Object.ButtonStyle1(ButtonT, EndHighT, ButtonF, EndHighF, MousePlace(MouseX, MouseY, EndX, EndY, EndX + EndWidth, EndY + EndHighF));
+		outtextxy(EndX, EndY, _T("返回"));//输出文字
+
+		settextstyle(15, 0, _T("宋体"));//打印鼠标坐标
+		outtextxy(0, 0, (std::to_wstring(MouseX) + L" " + std::to_wstring(MouseY)).c_str());
+		FlushBatchDraw();//将绘图从缓存中绘制到屏幕====================
+
+
+		if (Mouse.message == WM_LBUTTONDOWN && !BoolMouseLife) {//点击鼠标左键
+			if (BoolButton1) {//按钮1 
+				BoolFPS = !BoolFPS;//FPS显示
+			}
+			if (BoolButton2) {//按钮2 
+				BoolZbxs = !BoolZbxs;//坐标显示
+			}
+			if (BoolButton3) {//按钮3
+				BoolVxs = !BoolVxs;
+			}
+			//
+			if (BoolButtonEnd) {//按钮 返回
+				YM = "set";//切换到初始界面
+				GameData("SDW", 1);
+				return;
+			}
+		}else if (Mouse.message == WM_MOUSEWHEEL) {//鼠标滚轮
+			if (Mouse.wheel > 0) {
+				ButtonY += (int)(Win.WinY * 0.05);
+			}
+			else {
+				ButtonY -= (int)(Win.WinY * 0.05);
+			}
+			if (ButtonY > Win.WinY / 5) ButtonY = Win.WinY / 5;
+			if (ButtonY < Win.WinY / 5 - ButtonSpaceY * 2) ButtonY = Win.WinY / 5 - ButtonSpaceY * 2;
+		}
+		Sleep(1); //延时
+		cleardevice();// 清屏
+	}
+	GameData("SDW", 1);
 }
 
 void YMAbout() {//<------------------------------------------------------------------关于界面
