@@ -37,6 +37,18 @@
     <Filter Include="头文件\source\Game\Unit">
       <UniqueIdentifier>{bd31a900-0bbc-4e64-ac9d-67788bf4bd6f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\source\OpenGL">
+      <UniqueIdentifier>{85fc98d5-0c4d-4d29-b349-40a23de089f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\source\OpenGL">
+      <UniqueIdentifier>{e0f35703-4bbb-4495-a304-8eb529a7f49d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\source\Camera">
+      <UniqueIdentifier>{facf6215-c28c-478a-9c8f-8eb9a0e4a8fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\source\Camera">
+      <UniqueIdentifier>{e19f06cc-b21d-4bfb-85ba-f1696e5f4079}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -84,6 +96,39 @@
     <ClCompile Include="GameUnit.h">
       <Filter>头文件\source\Game\Unit</Filter>
     </ClCompile>
+    <ClCompile Include="OpenGL.cpp">
+      <Filter>源文件\source\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\C++\OpenGL\glad\src\glad.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="stb_image_impl.cpp">
+      <Filter>源文件\source\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="TextRenderer.cpp">
+      <Filter>源文件\source\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="UIClickableText.cpp">
+      <Filter>源文件\source\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>源文件\source\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteRenderer.cpp">
+      <Filter>源文件\source\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.h.cpp">
+      <Filter>源文件\source\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>源文件\source\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>源文件\source\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawShape.cpp">
+      <Filter>源文件\source\OpenGL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Begin.h">
@@ -93,9 +138,6 @@
       <Filter>头文件\source\Data</Filter>
     </ClInclude>
     <ClInclude Include="Debug.h">
-      <Filter>头文件\source</Filter>
-    </ClInclude>
-    <ClInclude Include="json.hpp">
       <Filter>头文件\source</Filter>
     </ClInclude>
     <ClInclude Include="TypeConversion.h">
@@ -124,6 +166,45 @@
     </ClInclude>
     <ClInclude Include="GamePlayerMove.h">
       <Filter>头文件\source\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL.h">
+      <Filter>头文件\source\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>头文件\source\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>头文件\source\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>头文件\source\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>头文件\source\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TextRenderer.h">
+      <Filter>头文件\source\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Image.h">
+      <Filter>头文件\source\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="UIClickableText.h">
+      <Filter>头文件\source\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteRenderer.h">
+      <Filter>头文件\source\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>头文件\source\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawShape.h">
+      <Filter>头文件\source\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
