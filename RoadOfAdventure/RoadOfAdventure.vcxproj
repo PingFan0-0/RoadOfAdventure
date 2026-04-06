@@ -71,6 +71,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(SolutionDir)\PF\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\PF\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -111,6 +115,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>GLFW\glfw3.lib;opengl32.lib;freetype\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -130,7 +136,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Begin.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="DrawShape.cpp" />
+    <ClCompile Include="E:\C++\OpenGL\glad\src\glad.c" />
     <ClCompile Include="GameData.cpp" />
     <ClCompile Include="GameInput.cpp" />
     <ClCompile Include="GameLife.cpp" />
@@ -139,28 +148,47 @@
     <ClCompile Include="GameRun.cpp" />
     <ClCompile Include="GameUnit.cpp" />
     <ClCompile Include="GameUnit.h" />
+    <ClCompile Include="Image.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Model.h.cpp" />
+    <ClCompile Include="OpenGL.cpp" />
     <ClCompile Include="PageDisplay.cpp" />
     <ClCompile Include="PlayerInput.cpp" />
+    <ClCompile Include="SpriteRenderer.cpp" />
+    <ClCompile Include="stb_image_impl.cpp" />
+    <ClCompile Include="TextRenderer.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="TypeConversion.cpp" />
+    <ClCompile Include="UIClickableText.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Begin.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Debug.h" />
+    <ClInclude Include="DrawShape.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GameInput.h" />
     <ClInclude Include="GameLife.h" />
     <ClInclude Include="GamePageDisplay.h" />
     <ClInclude Include="GamePlayerMove.h" />
     <ClInclude Include="GameRun.h" />
+    <ClInclude Include="Image.h" />
     <ClInclude Include="json.hpp" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="OpenGL.h" />
     <ClInclude Include="PageDisplay.h" />
     <ClInclude Include="PlayerInput.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="SpriteRenderer.h" />
+    <ClInclude Include="stb_image.h" />
+    <ClInclude Include="TextRenderer.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="TypeConversion.h" />
+    <ClInclude Include="UIClickableText.h" />
+    <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>
