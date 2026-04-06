@@ -91,7 +91,7 @@ void Unit::Move() {//移动
 	float T = 5;
 	//=========== X ==========
 	if (V.X != 0) {//当玩家 X轴 移动时
-		float NowS = V.X * Time.JGTime / 1000;//位移
+		float NowS = V.X * Time.JGTime;//位移
 		float ToX = XY.X + NowS;//目标坐标 x
 		if (NowS >= 1) {//当移动量大于等于1时 可能会跨格子
 			//Null
@@ -119,7 +119,7 @@ void Unit::Move() {//移动
 	}
 	//=========== Y ==========
 	if (V.Y != 0) {//当玩家 X轴 移动时
-		float NowS = V.Y * Time.JGTime / 1000;//位移
+		float NowS = V.Y * Time.JGTime;//位移
 		float ToY = XY.Y + NowS;//目标坐标 y
 		if (NowS >= 1) {//当移动量大于等于1时 可能会跨格子
 			//Null
@@ -163,8 +163,8 @@ void Unit::ToF(int FX, int FY) {//使用牵引力移动 输入方向
 }
 
 void Unit::ToV() {//计算速度
-	V.X += A.X * Time.JGTime / 1000;
-	V.Y += A.Y * Time.JGTime / 1000;
+	V.X += A.X * Time.JGTime;
+	V.Y += A.Y * Time.JGTime;
 }
 
 void Unit::Tof() {//阻力
@@ -201,9 +201,7 @@ void Unit::UnitTo() {//单位运动计算
 //
 
 bool Unit::IfOnSpace(float X, float Y, float DX, float DY) {//判断是否在区内
-	if (X > XY.X || DX < XY.X) return false;
-	if (Y > XY.Y || DY < XY.Y) return false;
-	return true;
+	return !(X > XY.X || DX < XY.X) || (Y > XY.Y || DY < XY.Y);
 }
 //
 
