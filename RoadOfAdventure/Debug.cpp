@@ -11,11 +11,13 @@ void Debug(std::string str) {//<------------------------------------------------
 	if (str == "sss") {//清空日志  
 		std::ofstream DubugOut(DebugWay);//打开文件 
 		DubugOut << "==================================日志==================================\n";
-		if (!BoolDebug) DubugOut << "\n日志以记录关闭 可以在设置中打开此功能\n";
+		if (!BoolDebug) DubugOut << "日志以记录关闭 可以在设置中打开此功能\n";
 		return;//退出 
 	}
+	str = "[" + std::to_string((float)clock() / 1000) + "] " + str + "\n";
 	std::ofstream DubugOut(DebugWay, std::ios::app);
-	DubugOut << "\n[" + std::to_string((float)clock() / 1000) + "] " + str;//写入文件 
+	DubugOut << str;//写入文件 
+	std::cout << "Debug " + str;
 }
 
 void DebugError(std::string str) {//<---------------------------------------------------------错误日志 
@@ -27,7 +29,9 @@ void DebugError(std::string str) {//<-------------------------------------------
 		return;//退出 
 	}
 	std::ofstream DubugOut(ErrorWay, std::ios::app);//打开文件
-	DubugOut << "\n[" + std::to_string((float)clock() / 1000) + "] " + str;;//写入文件
+	str = "[" + std::to_string((float)clock() / 1000) + "] " + str + "\n";
+	DubugOut << str;//写入文件
+	std::cout << str ;
 }
 
 void DebugWarn(std::string str) {//<---------------------------------------------------------警告日志
@@ -39,7 +43,9 @@ void DebugWarn(std::string str) {//<--------------------------------------------
 		return;//退出
 	}
 	std::ofstream DubugOut(WarnWay, std::ios::app);//打开文件
-	DubugOut << "\n[" + std::to_string((float)clock() / 1000) + "] " + str;;//写入文件
+	str = "[" + std::to_string((float)clock() / 1000) + "] " + str + "\n";
+	DubugOut << str;//写入文件
+	std::cout << "警告  " + str;
 }
 
 void Error(const std::string Text, const std::string Type) {//<----------------------------------------------------错误显示
@@ -51,7 +57,7 @@ void Error(const std::string Text, const std::string Type) {//<-----------------
 	else if (Type == "R") {//显示错误
 		Error("", "sss");
 	}
-	else if (Type == "sss") {//清空错误
+	else if (Type == "sss" && ErrorNum) {//清空错误
 		Debug("发现错误数:  " + std::to_string(ErrorNum));
 		DebugError("目前发现错误数:  " + std::to_string(ErrorNum));
 		DebugError("======================================================");
