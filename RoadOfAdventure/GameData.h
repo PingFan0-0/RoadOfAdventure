@@ -3,8 +3,9 @@
 #include<iostream>
 #include<string>
 #include<graphics.h>
-#include"json.hpp"
+#include<json.hpp>
 #include<vector>
+
 
 
 extern const std::wstring DataWayParent;//-----文件夹路径 游戏数据
@@ -13,7 +14,9 @@ extern const std::wstring DataParent;//--------文件夹路径 数据
 
 extern const std::wstring MapParent;//---------文件夹路径 地图
 extern const std::wstring ImageParent;//-------文件夹路径 图片
-extern const std::wstring InformationParent;//-文件夹路径 图片
+extern const std::wstring InformationParent;//-文件夹路径 json
+extern const std::wstring ShaderParent;//------文件夹路径 着色器
+extern const std::wstring FontsParent;//-------文件夹路径 字体
 
 extern const std::string GameDataWay;//------文件名称 游戏数据
 extern const std::string SetDataWay;//-------文件名称 设置数据
@@ -96,6 +99,9 @@ struct StructWin {//窗口信息
 	int LastSize;//上次每个格子的像素大小
 };extern StructWin Win;
 
+
+
+
 //struct StructImage {//图片信息 
 //	std::string imageway;//图片路径
 //	IMAGE image;//图片数据
@@ -152,8 +158,8 @@ struct StructCentralData {//中心数据
 }; extern StructCentralData CentralData;
 
 struct StructTime {//时间信息
-	clock_t LastTime;//---------------上次时间
-	clock_t NowTime;//----------------现在时间
+	float LastTime;//---------------上次时间
+	float NowTime;//----------------现在时间
 	float JGTime;//---------------------间隔的时间
 	int FPS;//
 }; extern StructTime Time;
@@ -167,8 +173,8 @@ struct StructInput {//输入信息
 }; extern StructInput PlayerInput;
 
 extern ExMessage Mouse;//定义鼠标数据
-extern int MouseX;//鼠标坐标
-extern int MouseY;
+extern double MouseX;//鼠标坐标
+extern double MouseY;
 
 extern std::string YM;//当前页面
 
