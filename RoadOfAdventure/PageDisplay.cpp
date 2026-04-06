@@ -5,23 +5,46 @@
 #include<graphics.h>
 #include"GameRun.h"
 
+#include"Shader.h"
+#include"Image.h"
+#include"Model.h"
+#include"OpenGL.h"
+#include"SpriteRenderer.h"
+#include"TextRenderer.h"
+#include"Texture.h"
+#include"UIClickableText.h"
+#include"Vertex.h"
+#include"DrawShape.h"
 
 
-void NewWindows(int X, int Y) {//<---------------------------------------创建窗口
-	initgraph(X, Y);//初始化图形界面
-}
+#include"Debug.h"
+
+#include"Camera.h"
+
+auto& uiManager = UIClickableTextManager::GetInstance();
+
+
+
+
+//void NewWindows(int X, int Y) {//<---------------------------------------创建窗口
+//	initgraph(X, Y);//初始化图形界面
+//}
 
 
 void ymxs() {//<---------------------------------------------------------页面选择
 	if (YM == "begin")  YMBegin();//初始界面
-	if (YM == "gameon") YMGameRun();//游戏页面
-	if (YM == "set")    YMSet();//设置页面
-	if (YM == "setgame")YMSetGame();//设置 - game界面
-	if (YM == "about")  YMAbout();//关于页面.
+	else if (YM == "gameon") YMGameRun();//游戏页面
+	/*
+	else if (YM == "set")    YMSet();//设置页面
+	else if (YM == "setgame")YMSetGame();//设置 - game界面
+	else if (YM == "about")  YMAbout();//关于页面.
+	*/
+	uiManager.Clear();//每次页面切换都清除可点击文本
 
-
+	//非常旧的========
+#pragma region
 	//if(cz == 0){//起始页面====================(0) 
- //   	while(1) {//input
+	//  	while(1) {//input
 	//		std::string str;
 	//		str+= "冒险之路\n1.继续游戏\n2.设置\n3.关于\n\nEsc.退出游戏";
 	//		cls();//清屏
@@ -183,113 +206,353 @@ void ymxs() {//<---------------------------------------------------------页面�
 	//		}
 	//	}
 	//}
+#pragma endregion
 }
 
-void YMBegin() {//<--------------------------------------------------------------------初始界面
-	int TitleHigh = Win.WinY / 15;// ===== Title
-	int TitleX = Win.WinX / 2 - Win.WinX / 4;
-	int TitleY = Win.WinY / 20;
-	int ButtonHighT = Win.WinY / 20 + 5;// ===== Button
-	int ButtonHighF = Win.WinY / 20;
-	int ButtonWidth = 120;
-	int ButtonX = Win.WinX / 8;
-	int ButtonY = Win.WinY / 5;
-	int ButtonSpaceY = Win.WinY / 10;
-	int EndHighT = ButtonHighT;// ===== End
-	int EndHighF = ButtonHighF;
-	int EndWidth = ButtonWidth;
-	int EndX = ButtonX;
-	int EndY = Win.WinY - Win.WinY / 10 - EndHighF;
+//加载着色器
+#pragma region
 
-	COLORREF ButtonT = RGB(255, 55, 55);
-	COLORREF ButtonF = RGB(255, 255, 255);
 
-	bool BoolButtonEnd = false;
-	bool BoolButton1 = false;
-	bool BoolButton2 = false;
-	bool BoolButton3 = false;
 
-	bool BoolMouseLife = false;
 
-	class C {
-	public:
-		void TextStyle1(COLORREF ButtonColor, int ButtonSize) {
-			settextstyle(ButtonSize, 0, _T("宋体"));
-			settextcolor(ButtonColor);//设置文字颜色
+#pragma endregion
+
+
+
+
+// ---------- 键盘输入 ----------------
+void processInput(GLFWwindow* window,float JGTime){
+	// ---------- 移动 ----------
+	float cameraSpeed = 3.0f;
+	float S = JGTime * cameraSpeed;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		cameraPos += cameraUp * S;
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		cameraPos -= cameraUp * S;
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * S;
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * S;
+	}
+	// ---------- 退出 ----------
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {// ESC 关闭
+		BoolTheGame = false;//结束游戏主循环
+	}
+	// ---------- 切换模式 ----------
+	glfwSetKeyCallback(window, [](GLFWwindow* w, int k, int, int a, int) {//键盘事件
+		if (k == GLFW_KEY_SPACE && a == GLFW_PRESS) {// 空格 切换显示模式
+			BoolMod = !BoolMod;//切换状态
+			if (BoolMod) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式
+			else  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);//默认模式
 		}
-		bool ButtonStyle1(COLORREF ColorT, int SizeT, COLORREF ColorF, int SizeF, bool BoolClick) {
-			if (BoolClick) TextStyle1(ColorT, SizeT);
-			else TextStyle1(ColorF, SizeF);
-			return BoolClick;
-		}
-	}Object;
-
-	while (1) {
-		BoolMouseLife = (Mouse.message == WM_LBUTTONDOWN);
-
-		peekmessage(&Mouse, EX_MOUSE);
-
-		//获取鼠标数据
-		MouseX = Mouse.x;//更新鼠标坐标
-		MouseY = Mouse.y;
-
-		BeginBatchDraw();//将绘图保存在缓存中====================
-		std::wstring text;
-		settextstyle(TitleHigh, 0, _T("宋体"));//设置字体 ===== Title
-		settextcolor(RGB(255, 255, 0));//设置文字颜色
-		outtextxy(TitleX, TitleY, _T("冒险之路"));//输出文字
-		// ===== Button
-		//设置字体 =-= (开始游戏)
-		BoolButton1 = Object.ButtonStyle1(ButtonT, ButtonHighT, ButtonF, ButtonHighF, MousePlace(MouseX, MouseY, ButtonX, ButtonY + ButtonSpaceY * 0, ButtonX + ButtonWidth, ButtonY + ButtonSpaceY * 0 + ButtonHighF));
-		outtextxy(ButtonX, ButtonY + ButtonSpaceY * 0, _T("开始游戏"));
-		//设置字体 =-= (设置)
-		BoolButton2 = Object.ButtonStyle1(ButtonT, ButtonHighT, ButtonF, ButtonHighF, MousePlace(MouseX, MouseY, ButtonX, ButtonY + ButtonSpaceY * 1, ButtonX + ButtonWidth, ButtonY + ButtonSpaceY * 1 + ButtonHighF));
-		outtextxy(ButtonX, ButtonY + ButtonSpaceY * 1, _T("设置"));
-		//设置字体 =-= (关于)
-		BoolButton3 = Object.ButtonStyle1(ButtonT, ButtonHighT, ButtonF, ButtonHighF, MousePlace(MouseX, MouseY, ButtonX, ButtonY + ButtonSpaceY * 2, ButtonX + ButtonWidth, ButtonY + ButtonSpaceY * 2 + ButtonHighF));
-		outtextxy(ButtonX, ButtonY + ButtonSpaceY * 2, _T("关于"));
-		//设置字体 =-= (退出)
-		BoolButtonEnd = Object.ButtonStyle1(ButtonT, EndHighT, ButtonF, EndHighF, MousePlace(MouseX, MouseY, EndX, EndY, EndX + EndWidth, EndY + EndHighF));
-		outtextxy(EndX, EndY, _T("退出"));//输出文字
-
-		settextstyle(15, 0, _T("宋体"));//打印鼠标坐标
-		outtextxy(0, 0, (std::to_wstring(MouseX) + L" " + std::to_wstring(MouseY)).c_str());
-		FlushBatchDraw();//将绘图从缓存中绘制到屏幕====================
-
-
-		if (Mouse.message == WM_LBUTTONDOWN && !BoolMouseLife) {//点击鼠标左键
-			if (BoolButton1) {//按钮1 开始游戏
-				if (gamestart()) {
-					YM = "gameon";//切换到游戏界面
-					return;
-				}
-				else {
-					MessageBox(GetHWnd(), _T("地图文件打开失败！"), _T("错误"), MB_OK | MB_ICONERROR);
-					Mouse.x = -1;
-					Mouse.y = -1;
-					//YM = "begin";//保持在初始界面
-					return;
-				}
-			}
-			if (BoolButton2) {//按钮2 设置
-				YM = "set";//切换到设置界面
-				return;
-			}
-			if (BoolButton3) {//按钮3 关于
-				YM = "about";//切换到关于界面
-				return;
-			}
-			if (BoolButtonEnd) {//按钮4 退出
-				BoolTheGame = false;//结束游戏主循环
-				return;
-			}
-		}
-
-		Sleep(1); //延时
-		cleardevice();// 清屏
+	});
+}
+// ---------- 鼠标移动事件 ------------
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+	
+	MouseX = xpos;//更新鼠标坐标
+	MouseY = ypos;//更新鼠标坐标
+	//static float lastX = 400, lastY = 300;
+	//static bool firstMouse = true;
+	//if (firstMouse) {
+	//	lastX = xpos;
+	//	lastY = ypos;
+	//	firstMouse = false;
+	//}
+	//float xoffset = xpos - lastX;
+	//float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+	//lastX = xpos;
+	//lastY = ypos;
+	//float sensitivity = 0.1f; // change this value to your liking
+	//xoffset *= sensitivity;
+	//yoffset *= sensitivity;
+	//static float yaw = -90.0f; // yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right
+	//static float pitch = 0.0f;
+	//yaw += xoffset;
+	//pitch += yoffset;
+	//if (pitch > 89.0f)
+	//	pitch = 89.0f;
+	//if (pitch < -89.0f)
+	//	pitch = -89.0f;
+	//glm::vec3 front;
+	//front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	//front.y = sin(glm::radians(pitch));
+	//front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	//cameraFront = glm::normalize(front);
+}
+// ---------- 鼠标滚轮事件 ------------
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+	camerafov -= (float)yoffset;
+	if (camerafov < 1.0f) camerafov = 1.0f;
+	if (camerafov > 90.0f) camerafov = 90.0f;
+	// 更新投影矩阵
+	//Debug("滚轮事件: " + std::to_string(camerafov));//测试日志
+	projection = glm::perspective(glm::radians(camerafov), (float)Win.WinX / (float)Win.WinY, 0.1f, 100.0f);
+}
+// ---------- 鼠标点击事件 ------------
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+		uiManager.HandleClick(MouseX, MouseY);//处理点击事件
 	}
 }
 
+
+
+void YMBegin() {//<--------------------------------------------------------------------初始界面
+#pragma region 旧的
+	//int TitleHigh = Win.WinY / 15;// ===== Title
+	//int TitleX = Win.WinX / 2 - Win.WinX / 4;
+	//int TitleY = Win.WinY / 20;
+	//int ButtonHighT = Win.WinY / 20 + 5;// ===== Button
+	//int ButtonHighF = Win.WinY / 20;
+	//int ButtonWidth = 120;
+	//int ButtonX = Win.WinX / 8;
+	//int ButtonY = Win.WinY / 5;
+	//int ButtonSpaceY = Win.WinY / 10;
+	//int EndHighT = ButtonHighT;// ===== End
+	//int EndHighF = ButtonHighF;
+	//int EndWidth = ButtonWidth;
+	//int EndX = ButtonX;
+	//int EndY = Win.WinY - Win.WinY / 10 - EndHighF;
+
+	//COLORREF ButtonT = RGB(255, 55, 55);
+	//COLORREF ButtonF = RGB(255, 255, 255);
+
+	//bool BoolButtonEnd = false;
+	//bool BoolButton1 = false;
+	//bool BoolButton2 = false;
+	//bool BoolButton3 = false;
+
+	//bool BoolMouseLife = false;
+
+	//class C {
+	//public:
+	//	void TextStyle1(COLORREF ButtonColor, int ButtonSize) {
+	//		settextstyle(ButtonSize, 0, _T("宋体"));
+	//		settextcolor(ButtonColor);//设置文字颜色
+	//	}
+	//	bool ButtonStyle1(COLORREF ColorT, int SizeT, COLORREF ColorF, int SizeF, bool BoolClick) {
+	//		if (BoolClick) TextStyle1(ColorT, SizeT);
+	//		else TextStyle1(ColorF, SizeF);
+	//		return BoolClick;
+	//	}
+	//}Object;
+
+	//while (1) {
+	//	BoolMouseLife = (Mouse.message == WM_LBUTTONDOWN);
+
+	//	peekmessage(&Mouse, EX_MOUSE);
+
+	//	//获取鼠标数据
+	//	MouseX = Mouse.x;//更新鼠标坐标
+	//	MouseY = Mouse.y;
+
+	//	BeginBatchDraw();//将绘图保存在缓存中====================
+	//	std::wstring text;
+	//	settextstyle(TitleHigh, 0, _T("宋体"));//设置字体 ===== Title
+	//	settextcolor(RGB(255, 255, 0));//设置文字颜色
+	//	outtextxy(TitleX, TitleY, _T("冒险之路"));//输出文字
+	//	// ===== Button
+	//	//设置字体 =-= (开始游戏)
+	//	BoolButton1 = Object.ButtonStyle1(ButtonT, ButtonHighT, ButtonF, ButtonHighF, MousePlace(MouseX, MouseY, ButtonX, ButtonY + ButtonSpaceY * 0, ButtonX + ButtonWidth, ButtonY + ButtonSpaceY * 0 + ButtonHighF));
+	//	outtextxy(ButtonX, ButtonY + ButtonSpaceY * 0, _T("开始游戏"));
+	//	//设置字体 =-= (设置)
+	//	BoolButton2 = Object.ButtonStyle1(ButtonT, ButtonHighT, ButtonF, ButtonHighF, MousePlace(MouseX, MouseY, ButtonX, ButtonY + ButtonSpaceY * 1, ButtonX + ButtonWidth, ButtonY + ButtonSpaceY * 1 + ButtonHighF));
+	//	outtextxy(ButtonX, ButtonY + ButtonSpaceY * 1, _T("设置"));
+	//	//设置字体 =-= (关于)
+	//	BoolButton3 = Object.ButtonStyle1(ButtonT, ButtonHighT, ButtonF, ButtonHighF, MousePlace(MouseX, MouseY, ButtonX, ButtonY + ButtonSpaceY * 2, ButtonX + ButtonWidth, ButtonY + ButtonSpaceY * 2 + ButtonHighF));
+	//	outtextxy(ButtonX, ButtonY + ButtonSpaceY * 2, _T("关于"));
+	//	//设置字体 =-= (退出)
+	//	BoolButtonEnd = Object.ButtonStyle1(ButtonT, EndHighT, ButtonF, EndHighF, MousePlace(MouseX, MouseY, EndX, EndY, EndX + EndWidth, EndY + EndHighF));
+	//	outtextxy(EndX, EndY, _T("退出"));//输出文字
+
+	//	settextstyle(15, 0, _T("宋体"));//打印鼠标坐标
+	//	outtextxy(0, 0, (std::to_wstring(MouseX) + L" " + std::to_wstring(MouseY)).c_str());
+	//	FlushBatchDraw();//将绘图从缓存中绘制到屏幕====================
+
+
+	//	if (Mouse.message == WM_LBUTTONDOWN && !BoolMouseLife) {//点击鼠标左键
+	//		if (BoolButton1) {//按钮1 开始游戏
+	//			if (gamestart()) {
+	//				YM = "gameon";//切换到游戏界面
+	//				return;
+	//			}
+	//			else {
+	//				MessageBox(GetHWnd(), _T("地图文件打开失败！"), _T("错误"), MB_OK | MB_ICONERROR);
+	//				Mouse.x = -1;
+	//				Mouse.y = -1;
+	//				//YM = "begin";//保持在初始界面
+	//				return;
+	//			}
+	//		}
+	//		if (BoolButton2) {//按钮2 设置
+	//			YM = "set";//切换到设置界面
+	//			return;
+	//		}
+	//		if (BoolButton3) {//按钮3 关于
+	//			YM = "about";//切换到关于界面
+	//			return;
+	//		}
+	//		if (BoolButtonEnd) {//按钮4 退出
+	//			BoolTheGame = false;//结束游戏主循环
+	//			return;
+	//		}
+	//	}
+
+	//	Sleep(1); //延时
+	//	cleardevice();// 清屏
+	//}
+#pragma endregion
+#pragma region 文本 ===================
+	TextRenderer textRenderer(Win.WinX, Win.WinY);
+	std::string FontsName = wstring_string(DataParent + L"/" + FontsParent) + "/" + "ZLabsRoundPix_16px_MS_CN.ttf";
+	if (!textRenderer.Load(FontsName, textRenderer.FontSize)) {
+
+	}
+	// 添加可点击按钮
+	uiManager.Init(&textRenderer, Win.WinX, Win.WinY);
+
+	// 注册可点击文本
+	uiManager.AddText("开始游戏", 100, 200, 1.0f, []() {
+		if (gamestart()) {
+			Debug("开始游戏");
+			YM = "gameon";//切换到游戏界面
+		}
+		else {
+			Error("地图文件打开失败！", "W");
+			MouseX = -1;
+			MouseY = -1;
+			YM = "begin";//保持在初始界面
+		}
+		}, glm::vec3(1.0f), glm::vec3(1.0f, 8.0f, 0.0f));
+	uiManager.AddText("设置", 100, 260, 1.0f, []() {
+		Debug("打开设置 不不不设置还没好");
+		//YM = "set";//切换到设置界面
+		}, glm::vec3(1.0f), glm::vec3(1.0f, 8.0f, 0.0f));
+	uiManager.AddText("退出游戏", 100, 320, 1.0f, []() {
+		Debug("退出游戏");
+		BoolTheGame = false;
+		}, glm::vec3(1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+#pragma endregion
+#pragma region 顶点数据 ===============
+	Vertex vertex(verticesZ, verticesZ_size, indicesZ, verticesZ_size, propZ, 3);//创建顶点对象
+#pragma endregion
+#pragma region 加载贴图 ===============
+	//static unsigned char* data;//图像数据
+	//unsigned int Null = Texture("Data/Image/null.jpg", 0, true, data);//创建纹理对象
+#pragma endregion
+#pragma region 矩阵 ===================
+
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
+
+
+	glm::vec4 vec(0.0f, 0.0f, 0.0f, 1.0f);//定义一个4D向量
+	glm::mat4 trans = glm::mat4(1.0f);//初始化为单位矩阵
+	trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));//缩放
+	vec = trans * vec;//对向量进行变换
+	
+
+	//相机========
+	model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));//模型矩阵
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));//视图矩阵
+	projection = glm::perspective(glm::radians(45.0f), (float)Win.WinX / (float)Win.WinY, 0.1f, 100.0f);//投影矩阵
+
+	cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);//摄像机位置
+	cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);//摄像机朝向
+	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);//摄像机上方向
+
+#pragma endregion
+#pragma region 着色器 =================
+
+	Shader SH("vertexShader.glsl", "fragmentShader0.glsl");//创建着色器
+	SpriteRenderer spriteRenderer(Win.WinX, Win.WinY);
+#pragma endregion
+#pragma region OpenGL设置 =============
+
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//隐藏鼠标
+	glEnable(GL_DEPTH_TEST);//开启深度测试
+	if(BoolMod) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式
+	else  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);//默认模式
+	glEnable(GL_BLEND);// 启用混合
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);// 设置混合函数
+
+#pragma endregion
+#pragma region 绘制循环 =============== 
+	Debug("进入绘制---> 初始页面");//测试日志
+	while (BoolTheGame && YM == "begin") {//绘制循环--------------------------------
+		TimeMath();//计算时间
+
+		processInput(window, Time.JGTime);//处理键盘输入
+		glfwSetCursorPosCallback(window, mouse_callback);//设置鼠标位置回调函数
+		glfwSetScrollCallback(window, scroll_callback);//设置鼠标滚轮回调函数
+		glfwSetMouseButtonCallback(window, mouse_button_callback);//设置鼠标按钮回调函数
+		uiManager.UpdateHover(MouseX, MouseY);//更新鼠标悬停状态
+
+		glClearColor(0.15f, 0.2f, 0.2f, 0);//设置背景颜色
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//清除颜色和深度缓冲区
+		glActiveTexture(GL_TEXTURE0);//激活纹理单元0
+		glBindTexture(GL_TEXTURE_2D, atlas);//绑定纹理
+		
+		glBindVertexArray(vertex.GetVAO());//绑定顶点数组对象
+		SH.setInt("ourTexture", 0);   // 确保 uniform 指向纹理单元0
+		SH.Draw();//使用着色器
+
+
+
+		trans = glm::rotate(trans, glm::radians(-40.0f * Time.JGTime), glm::vec3(0.0f, 0.0f, 1.0f));//旋转
+		SH.setMat4("transform", trans);
+		float r1 = (sin(Time.NowTime) + 1) / 2;//计算颜色
+		float g1 = (sin(Time.NowTime + 2.0f) + 1) / 2;//计算颜色
+		float b1 = (sin(Time.NowTime + 4.0f) + 1) / 2;//计算颜色
+		SH.SetColor(r1, g1, b1);//设置颜色
+		SH.setMat4("model", model);
+
+		//透视
+		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);//视图矩阵
+		SH.setMat4("view", view);
+		SH.setMat4("projection", projection);
+		for (unsigned int i = 0; i < 10; i++)
+		{
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, cubePositions[i]);
+			float angle = 20.0f * i;
+			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			SH.setMat4("model", model);//设置模型矩阵
+
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+		spriteRenderer.DrawSprite(atlas, regions[0], glm::vec2(100, 400), glm::vec2(100), sin(Time.NowTime));
+
+		textRenderer.RenderText("FPS: " + std::to_string(FPS), 10.0f, 10.0f, 0.3f, glm::vec3(1.0f));
+		textRenderer.RenderText(std::to_string((int)MouseX) + "," + std::to_string((int)MouseY), 10.0f, 25.0f, 0.3f, glm::vec3(1.0f));
+		textRenderer.RenderText("冒险之路", 100.0f, 50.0f, 1.0f, glm::vec3(1.0f, 0.5f, 0.2f));
+		textRenderer.RenderText("PF0_0", 600.0f, 500.0f, sin(Time.NowTime * 2), glm::vec3(0.3f, 0.7f, 0.9f));
+		uiManager.Render();//渲染按钮
+		//数据处理
+		glfwSwapBuffers(window);//交换缓冲区
+		glfwPollEvents();//获取事件
+	}
+	vertex.DeleteBuffer();//删除缓冲区
+	//glfwCreateCursor(nullptr, 0, 0);//恢复默认鼠标
+	Debug("离开页面<--- 初始页面");//测试日志
+#pragma endregion
+}
+/*
 void YMSet() {//<--------------------------------------------------------------------设置界面
 	int TitleHigh = Win.WinY / 15;// ===== Title
 	int TitleX = Win.WinX / 2 - Win.WinX / 4;
@@ -595,7 +858,7 @@ void YMAbout() {//<-------------------------------------------------------------
 		cleardevice();// 清屏
 	}
 }
-
+*/
 void YMGameRun() {//<------------------------------------------------------------------游戏界面
 	GameOnRun();
 }
