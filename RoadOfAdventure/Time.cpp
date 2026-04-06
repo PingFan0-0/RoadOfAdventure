@@ -2,18 +2,16 @@
 
 
 #include"GameData.h"
-
+#include"OpenGL.h"
 
 void TimeMath() {//<------------------------------------------------------------------时间计算
 
-	
-
+	Time.LastTime = Time.NowTime;//更新上次时间
+	Time.NowTime = (float)glfwGetTime();//获取时间
+	Time.JGTime = Time.NowTime - Time.LastTime;//计算间隔时间
 	Time.FPS++;
-	Time.NowTime = clock();//获取当前时间
-	if (Time.LastTime + 1000 <= Time.NowTime) {
-		Time.LastTime = Time.NowTime;//赋值上次时间
-		FPS = Time.FPS * 1;
-		Time.JGTime = 1000.0f / FPS;//计算间隔时间
+	if (Time.FPS >= FPSWeek) {
+		FPS = (int)(1 / Time.JGTime);//计算FPS
 		Time.FPS = 0;
 	}
 }
