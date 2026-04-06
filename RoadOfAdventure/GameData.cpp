@@ -1,18 +1,20 @@
 ﻿#include "GameData.h"
 
 #include<Windows.h>
-#include"json.hpp"
+#include<json.hpp>
 #include"Debug.h"
 #include"TypeConversion.h"
 #include<fstream>
 
 const std::wstring DataWayParent = L"GameData";//----文件夹路径 游戏数据
-const std::wstring SetWayParent = L"Debug";//-------文件夹路径 Debug
-const std::wstring DataParent = L"Data";//--------文件夹路径 数据 
+const std::wstring SetWayParent = L"Debug";//--------文件夹路径 Debug
+const std::wstring DataParent = L"Data";//-----------文件夹路径 数据 
 
-const std::wstring MapParent = L"Map";//---------文件夹路径 地图
-const std::wstring ImageParent = L"Image";//-------文件夹路径 图片
-const std::wstring InformationParent = L"Information";//-------文件夹路径 图片
+const std::wstring MapParent = L"Map";//------------------------文件夹路径 地图
+const std::wstring ImageParent = L"Image";//--------------------文件夹路径 图片
+const std::wstring InformationParent = L"Information";//--------文件夹路径 json
+const std::wstring ShaderParent = L"Shader";//------------------文件夹路径 着色器
+const std::wstring FontsParent = L"Fonts";//--------------------文件夹路径 字体
 
 const std::string GameDataWay = "GameData/GameData.json";//-----文件名称 游戏数据
 const std::string SetDataWay = "GameData/SetData.json";//------文件名称 设置数据
@@ -57,6 +59,8 @@ StructWin Win = {//窗口信息
 	0//上次每个格子的像素大小
 };
 
+
+
 StructCentralData CentralData;//中心数据
 
 //std::vector <StructImage> ImageData;//图片信息
@@ -72,8 +76,8 @@ StructInput PlayerInput = {//输入信息
 };
 
 ExMessage Mouse;//定义鼠标数据
-int MouseX;//鼠标坐标
-int MouseY;
+double MouseX;//鼠标坐标
+double MouseY;
 
 std::string YM;//当前页面
 
