@@ -1,3 +1,5 @@
 ﻿#pragma once
 
-void Begin();
+extern const char* PF;
+
+bool Begin();
