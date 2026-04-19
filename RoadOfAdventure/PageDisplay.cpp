@@ -2,7 +2,7 @@
 
 #include"GameData.h"
 #include"PlayerInput.h"
-#include<graphics.h>
+//#include<graphics.h>
 #include"GameRun.h"
 
 #include"Shader.h"
@@ -219,7 +219,7 @@ void ymxs() {//<---------------------------------------------------------页面�
 
 
 
-
+bool BoolKeyEsc = false;
 // ---------- 键盘输入 ----------------
 void processInput(GLFWwindow* window,float JGTime){
 	// ---------- 移动 ----------
@@ -238,15 +238,20 @@ void processInput(GLFWwindow* window,float JGTime){
 		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * S;
 	}
 	// ---------- 退出 ----------
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {// ESC 关闭
-		BoolTheGame = false;//结束游戏主循环
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {// ESC按下  关闭
+		if(BoolKeyEsc) BoolTheGame = false;//结束游戏主循环
 	}
-	// ---------- 切换模式 ----------
+	else if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_RELEASE) {// ESC松开
+		BoolKeyEsc = true;
+	}
 	glfwSetKeyCallback(window, [](GLFWwindow* w, int k, int, int a, int) {//键盘事件
-		if (k == GLFW_KEY_SPACE && a == GLFW_PRESS) {// 空格 切换显示模式
-			BoolMod = !BoolMod;//切换状态
-			if (BoolMod) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式
-			else  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);//默认模式
+		if (a == GLFW_PRESS) {
+			// ---------- 切换模式 ----------
+			if (k == GLFW_KEY_SPACE) {// 空格 切换显示模式
+				BoolMod = !BoolMod;//切换状态
+				if (BoolMod) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式
+				else  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);//默认模式
+			}
 		}
 	});
 }
@@ -295,9 +300,24 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
 // ---------- 鼠标点击事件 ------------
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		uiManager.HandleClick(MouseX, MouseY);//处理点击事件
+		uiManager.HandleClick((float)MouseX, (float)MouseY);//处理点击事件
 	}
 }
+// ---------- 窗口回调 ----------
+bool BoolW = false;
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+	// 1. 更新视口
+	glViewport(0, 0, width, height);
+
+	DrawRectShape::GetInstance().UpdateProjection(width, height);//图形渲染器
+	//spriteRenderer.UpdateProjection(width, height);// 精灵渲染器
+	//textRenderer.UpdateProjection(width, height);  // 文本渲染器
+
+	projection = glm::perspective(glm::radians(camerafov), (float)Win.WinX / (float)Win.WinY, 0.1f, 100.0f);
+	Win.WinX = width; Win.WinY = height;
+	BoolW = true;
+}
+
 
 
 
@@ -407,8 +427,8 @@ void YMBegin() {//<-------------------------------------------------------------
 	//}
 #pragma endregion
 #pragma region 文本 ===================
-	TextRenderer textRenderer(Win.WinX, Win.WinY);
-	std::string FontsName = wstring_string(DataParent + L"/" + FontsParent) + "/" + "ZLabsRoundPix_16px_MS_CN.ttf";
+	TextRenderer textRenderer;
+	std::string FontsName = wstring_string(DataParent + L"/" + FontsParent) + "/" + FontMain;
 	if (!textRenderer.Load(FontsName, textRenderer.FontSize)) {
 
 	}
@@ -417,16 +437,8 @@ void YMBegin() {//<-------------------------------------------------------------
 
 	// 注册可点击文本
 	uiManager.AddText("开始游戏", 100, 200, 1.0f, []() {
-		if (gamestart()) {
-			Debug("开始游戏");
-			YM = "gameon";//切换到游戏界面
-		}
-		else {
-			Error("地图文件打开失败！", "W");
-			MouseX = -1;
-			MouseY = -1;
-			YM = "begin";//保持在初始界面
-		}
+		Debug("开始游戏");
+		YM = "gameon";
 		}, glm::vec3(1.0f), glm::vec3(1.0f, 8.0f, 0.0f));
 	uiManager.AddText("设置", 100, 260, 1.0f, []() {
 		Debug("打开设置 不不不设置还没好");
@@ -480,18 +492,23 @@ void YMBegin() {//<-------------------------------------------------------------
 #pragma region 着色器 =================
 
 	Shader SH("vertexShader.glsl", "fragmentShader0.glsl");//创建着色器
-	SpriteRenderer spriteRenderer(Win.WinX, Win.WinY);
+	SpriteRenderer spriteRenderer;
 #pragma endregion
 #pragma region OpenGL设置 =============
 
 	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//隐藏鼠标
 	glEnable(GL_DEPTH_TEST);//开启深度测试
-	if(BoolMod) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式
-	else  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);//默认模式
+	glDisable(GL_CULL_FACE);// 关闭面剔除
 	glEnable(GL_BLEND);// 启用混合
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);// 设置混合函数
+	if(BoolMod) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式
+	else  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);//默认模式
 
 #pragma endregion
+#pragma region 窗口 ===================
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+#pragma endregion
+	BoolKeyEsc = !(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS);
 #pragma region 绘制循环 =============== 
 	Debug("进入绘制---> 初始页面");//测试日志
 	while (BoolTheGame && YM == "begin") {//绘制循环--------------------------------
@@ -501,7 +518,7 @@ void YMBegin() {//<-------------------------------------------------------------
 		glfwSetCursorPosCallback(window, mouse_callback);//设置鼠标位置回调函数
 		glfwSetScrollCallback(window, scroll_callback);//设置鼠标滚轮回调函数
 		glfwSetMouseButtonCallback(window, mouse_button_callback);//设置鼠标按钮回调函数
-		uiManager.UpdateHover(MouseX, MouseY);//更新鼠标悬停状态
+		uiManager.UpdateHover((float)MouseX, (float)MouseY);//更新鼠标悬停状态
 
 		glClearColor(0.15f, 0.2f, 0.2f, 0);//设置背景颜色
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//清除颜色和深度缓冲区
@@ -536,6 +553,7 @@ void YMBegin() {//<-------------------------------------------------------------
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
+
 		spriteRenderer.DrawSprite(atlas, regions[0], glm::vec2(100, 400), glm::vec2(100), sin(Time.NowTime));
 
 		textRenderer.RenderText("FPS: " + std::to_string(FPS), 10.0f, 10.0f, 0.3f, glm::vec3(1.0f));
@@ -546,6 +564,12 @@ void YMBegin() {//<-------------------------------------------------------------
 		//数据处理
 		glfwSwapBuffers(window);//交换缓冲区
 		glfwPollEvents();//获取事件
+		if (BoolW) {
+			spriteRenderer.UpdateProjection(Win.WinX, Win.WinY);// 精灵渲染器
+			textRenderer.UpdateProjection(Win.WinX, Win.WinY);  // 文本渲染器
+			glEnable(GL_DEPTH_TEST);//开启深度测试
+			BoolW = !BoolW;
+		}
 	}
 	vertex.DeleteBuffer();//删除缓冲区
 	//glfwCreateCursor(nullptr, 0, 0);//恢复默认鼠标

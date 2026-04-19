@@ -1,21 +1,22 @@
 ﻿#include "GameUnit.h"
 
 #include"GameData.h"
-
+#include"MapData.h"
 
 
 std::vector <Unit> UnitData;//单位数据
 
 
-
-bool IfMove(int x, int y) {//<-----------------------------------------------------------------------是否可以移动
-	if (x < 0 || x >= Map.maxx)return false;
-	if (y < 0 || y >= Map.maxy)return false;
-	int num = Map.Data[to_MapHand(x, y)].floor;//获取地图数据 
-	if (num == 0 || num == 2 || num == 9 || num == 11) {//可以通过
-		return true;
-	}
-	return false;
+bool Unit::IfMove(int x, int y) {//<-----------------------------------------------------------------------是否可以移动
+	//if (x < 0 || x >= Map.maxx)return false;
+	//if (y < 0 || y >= Map.maxy)return false;
+	//BlockID num = engine.MapData.GetBlock(x, 1, y);//获取地图数据
+	//int num = Map.Data[to_MapHand(x, y)].floor;
+	//if (num == AIR) {//可以通过
+	//	return true;
+	//}
+	//return false;
+	return true;
 }
 
 bool IfTH(float x, float y) {//--------------------------------------------是同号
@@ -70,17 +71,29 @@ Unit::Unit() {};
 void Unit::Begin(float X, float Y, float LifeMax, float SizeX, float SizeY, uint8_t Hand, float M, float F) {
 	this->XY.X = X;
 	this->XY.Y = Y;
+  this->XY.Z = 0.0f;
+	this->XY.LX = X;
+	this->XY.LY = Y;
+	this->XY.LZ = 0.0f;
 	this->V.X = 0;
 	this->V.Y = 0;
+  this->V.Z = 0;
 	this->A.X = 0;
 	this->A.Y = 0;
+   this->A.Z = 0;
 	this->Life.now = LifeMax;
 	this->Life.max = LifeMax;
 	this->Size.X = SizeX;
 	this->Size.Y = SizeY;
+  this->Size.Z = 0.0f;
 	this->hand = Hand;
 	this->M.M = M;
+  this->M.now = M;
 	this->F.F = F;
+   this->F.u = 0.0f;
+	this->Rotation.X = 0.0f;
+	this->Rotation.Y = 0.0f;
+	this->Rotation.Z = 0.0f;
 	this->BoolDEL = true;
 }
 
@@ -152,12 +165,13 @@ void Unit::SetA(float AX, float AY) {//设置加速度
 	A.Y = AY;
 }
 
-void Unit::SetXY(float X, float Y) {//设置加速度
+void Unit::SetXYZ(float X, float Y ,float Z) {//设置位置速度
 	XY.X = X;
 	XY.Y = Y;
+	XY.Z = Z;
 }
 
-void Unit::ToF(int FX, int FY) {//使用牵引力移动 输入方向
+void Unit::ToF(float FX, float FY) {//使用牵引力移动 输入方向
 	A.X += FX * F.F / M.now;
 	A.Y += FY * F.F / M.now;
 }
@@ -173,7 +187,7 @@ void Unit::Tof() {//阻力
 	A.Y -= F.u * V.Y / M.now;
 }
 
-void Unit::ToM() {//阻力
+void Unit::ToM() {//质量
 	M.now = M.M;
 }
 
@@ -232,4 +246,8 @@ struct SNMfloat Unit::GetLife() {
 
 int Unit::GetHand() {
 	return hand;
+}
+
+glm::vec3 Unit::Getglmvec3XYZ() {
+	return glm::vec3(XY.X, XY.Z, XY.Y);//<-------
 }

@@ -99,9 +99,6 @@
     <ClCompile Include="OpenGL.cpp">
       <Filter>源文件\source\OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="E:\C++\OpenGL\glad\src\glad.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="stb_image_impl.cpp">
       <Filter>源文件\source\OpenGL</Filter>
     </ClCompile>
@@ -128,6 +125,18 @@
     </ClCompile>
     <ClCompile Include="DrawShape.cpp">
       <Filter>源文件\source\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VoxelEngine.cpp">
+      <Filter>源文件\source\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>源文件\source\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="MapData.cpp">
+      <Filter>源文件\source\Data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -205,6 +214,21 @@
     </ClInclude>
     <ClInclude Include="DrawShape.h">
       <Filter>头文件\source\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="VoxelEngine.h">
+      <Filter>头文件\source\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Chunk.h">
+      <Filter>头文件\source\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Block.h">
+      <Filter>头文件\source\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>头文件\source\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="MapData.h">
+      <Filter>头文件\source\Data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

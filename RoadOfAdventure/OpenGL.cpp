@@ -36,8 +36,8 @@ bool GLBegin() {//窗口初始化
 }
 
 void GLEnd() {//关闭窗口
-    glfwDestroyWindow(window);
-    glfwTerminate();
+    glfwDestroyWindow(window);//删除窗口
+    glfwTerminate();//安全退出OpenGL
 }
 
 

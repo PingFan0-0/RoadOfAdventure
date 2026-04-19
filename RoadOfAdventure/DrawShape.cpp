@@ -113,7 +113,7 @@ void DrawRectShape::UpdateProjection(unsigned int screenWidth, unsigned int scre
 }
 
 void DrawRectShape::DrawRect(float x1, float y1, float x2, float y2,
-    const glm::vec4& color,bool filled, float lineWidth) {\
+    const glm::vec4& color,bool filled, float lineWidth) {
 
     if (!m_initialized || m_shaderID == 0) return;
     glUseProgram(m_shaderID);
@@ -127,11 +127,11 @@ void DrawRectShape::DrawRect(float x1, float y1, float x2, float y2,
         // 实心：6个顶点（两个三角形）
         vertices = {
             x1,  y2,    color.r, color.g, color.b, color.a,
-            x2,  y2,    color.r, color.g, color.b, color.a,
             x1,  y1,    color.r, color.g, color.b, color.a,
             x2,  y2,    color.r, color.g, color.b, color.a,
-            x2,  y1,    color.r, color.g, color.b, color.a,
-            x1,  y1,    color.r, color.g, color.b, color.a
+            x2,  y2,    color.r, color.g, color.b, color.a,
+            x1,  y1,    color.r, color.g, color.b, color.a,
+            x2,  y1,    color.r, color.g, color.b, color.a
         };
         m_vertexCount = 6;
     }
@@ -147,15 +147,15 @@ void DrawRectShape::DrawRect(float x1, float y1, float x2, float y2,
     }
 
     // 更新 VBO
-    glBindVertexArray(m_VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(float), vertices.data());
+    glBindVertexArray(m_VAO);// 绑定 VAO
+    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);// 绑定 VBO
+    glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(float), vertices.data());// 更新顶点数据
 
     // 绘制
     if (filled)
-        glDrawArrays(GL_TRIANGLES, 0, m_vertexCount);
+        glDrawArrays(GL_TRIANGLES, 0, m_vertexCount);// 绘制实心矩形
     else
-        glDrawArrays(GL_LINE_LOOP, 0, m_vertexCount);
+        glDrawArrays(GL_LINE_LOOP, 0, m_vertexCount);// 绘制空心矩形
 
-    glBindVertexArray(0);
+    glBindVertexArray(0);// 解绑
 }

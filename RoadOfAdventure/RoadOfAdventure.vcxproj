@@ -74,6 +74,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(SolutionDir)\PF\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\PF\lib;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(SolutionDir)\PF\src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -139,7 +140,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="DrawShape.cpp" />
-    <ClCompile Include="E:\C++\OpenGL\glad\src\glad.c" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameData.cpp" />
     <ClCompile Include="GameInput.cpp" />
     <ClCompile Include="GameLife.cpp" />
@@ -148,8 +149,10 @@
     <ClCompile Include="GameRun.cpp" />
     <ClCompile Include="GameUnit.cpp" />
     <ClCompile Include="GameUnit.h" />
+    <ClCompile Include="glad.c" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MapData.cpp" />
     <ClCompile Include="Model.h.cpp" />
     <ClCompile Include="OpenGL.cpp" />
     <ClCompile Include="PageDisplay.cpp" />
@@ -161,12 +164,16 @@
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="TypeConversion.cpp" />
     <ClCompile Include="UIClickableText.cpp" />
+    <ClCompile Include="VoxelEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Begin.h" />
+    <ClInclude Include="Block.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Chunk.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="DrawShape.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GameInput.h" />
     <ClInclude Include="GameLife.h" />
@@ -175,6 +182,7 @@
     <ClInclude Include="GameRun.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="json.hpp" />
+    <ClInclude Include="MapData.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="OpenGL.h" />
     <ClInclude Include="PageDisplay.h" />
@@ -188,6 +196,7 @@
     <ClInclude Include="TypeConversion.h" />
     <ClInclude Include="UIClickableText.h" />
     <ClInclude Include="Vertex.h" />
+    <ClInclude Include="VoxelEngine.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

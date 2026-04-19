@@ -36,7 +36,7 @@ public:
     TextRenderer& operator=(TextRenderer&&) noexcept = default;
 
     // 构造函数：需要屏幕宽高（用于正交投影）
-    TextRenderer(GLuint screenWidth, GLuint screenHeight);
+    TextRenderer();
     ~TextRenderer();
 
     // 加载字体文件，fontSize为像素高度
@@ -48,6 +48,8 @@ public:
     // 计算文本边界：返回文本的实际占用区域（用于布局）
     TextBounds GetTextBounds(const std::string& text, float x, float y, float scale);
 
+    // 更新投影矩阵（窗口大小改变时调用）
+    void UpdateProjection(unsigned int screenWidth, unsigned int screenHeight);
 private:
     // 着色器程序ID
     GLuint m_shaderID;

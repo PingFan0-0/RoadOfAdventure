@@ -17,12 +17,12 @@ const std::wstring ShaderParent = L"Shader";//------------------文件夹路径 
 const std::wstring FontsParent = L"Fonts";//--------------------文件夹路径 字体
 
 const std::string GameDataWay = "GameData/GameData.json";//-----文件名称 游戏数据
-const std::string SetDataWay = "GameData/SetData.json";//------文件名称 设置数据
-const std::string DebugWay = "Debug/Debug.txt";//------------文件名称 Debug
-const std::string ErrorWay = "Debug/Error.txt";//------------文件名称 Error
-const std::string WarnWay = "Debug/Warn.txt";//-------------文件名称 Warn
+const std::string SetDataWay = "GameData/SetData.json";//-------文件名称 设置数据
+const std::string DebugWay = "Debug/Debug.txt";//---------------文件名称 Debug
+const std::string ErrorWay = "Debug/Error.txt";//---------------文件名称 Error
+const std::string WarnWay = "Debug/Warn.txt";//-----------------文件名称 Warn
 
-const std::string BeginMap = "冒险之路.json";//---------------初始的地图 
+const std::string BeginMap = "冒险之路.roaworld";//---------------初始的地图 
 
 const std::string NULLTEXT = "无/Null";
 
@@ -41,6 +41,9 @@ bool BoolWarn = false;//------------是否显示警告状态
 int FPS;//-------------------FPS数值 
 int FPSWeek = 10;//----------FPS循环周期 
 long long GameRunTime;//-----游戏时刻 
+
+
+std::string FontMain = "ZLabsRoundPix_16px_MS_CN.ttf";//字体信息
 
 StructPlayer Player;//玩家信息
 
@@ -75,7 +78,6 @@ StructInput PlayerInput = {//输入信息
 	27  //返回
 };
 
-ExMessage Mouse;//定义鼠标数据
 double MouseX;//鼠标坐标
 double MouseY;
 
@@ -83,11 +85,6 @@ std::string YM;//当前页面
 
 std::string MapName[201];//地图列表
 int MapNum;//地图列表 的地图数量
-
-std::string ErrorText;//错误信息
-int ErrorNum;//错误数量
-std::string WarnText;//警告信息
-int WarnNum;//警告数量
 
 
 void CDW(const std::wstring& str) {//<-------------------------------------------------------创建文件夹 
@@ -135,7 +132,7 @@ std::vector <FileData> FindFileAll(const std::wstring& str) {//<----------------
 }
 
 
-std::vector <FileData> FindJsonAll(const std::wstring& str) {//<-------------------------------------------------------查找所有文件
+std::vector <FileData> FindJsonAll(const std::wstring& str) {//<-------------------------------------------------------查找所有json文件
 	std::vector<FileData> FData;
 	// 遍历目录
 	for (const auto& entry : std::filesystem::recursive_directory_iterator(str)) {
@@ -421,11 +418,11 @@ bool GameMapData(std::string mapname) {//<--------------------------------------
 	//	}
 	//}
 	//cls();
-	if (ErrorNum != 0) {//错误显示
+	if (GetError() != 0) {//错误显示
 		Error("", "R");
 		return false;
 	}
-	if (WarnNum != 0) {
+	if (GetWarn() != 0) {
 		if (BoolWarn) {//警告显示
 			Warn("", "R");
 		}

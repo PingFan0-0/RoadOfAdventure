@@ -1,6 +1,11 @@
 ﻿#include "SpriteRenderer.h"
+
 #include <iostream>
-#include "Debug.h"   // 假设您有 Error 宏
+#include "Debug.h"
+#include "Game.h"
+
+
+
 
 static const char* vertexShaderSource = R"(
     #version 330 core
@@ -59,7 +64,7 @@ static GLuint linkProgram(GLuint vs, GLuint fs) {
     return prog;
 }
 
-SpriteRenderer::SpriteRenderer(unsigned int screenWidth, unsigned int screenHeight) {
+SpriteRenderer::SpriteRenderer() {
     // 编译着色器
     GLuint vs = compileShader(GL_VERTEX_SHADER, vertexShaderSource);
     GLuint fs = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
@@ -73,7 +78,7 @@ SpriteRenderer::SpriteRenderer(unsigned int screenWidth, unsigned int screenHeig
     if (!m_shaderID) return;
 
     // 设置正交投影矩阵（屏幕坐标，原点左上角，Y向下）
-    m_projection = glm::ortho(0.0f, (float)screenWidth, (float)screenHeight, 0.0f, -1.0f, 1.0f);
+    m_projection = glm::ortho(0.0f, (float)Win.WinX, (float)Win.WinY, 0.0f, -1.0f, 1.0f);
     glUseProgram(m_shaderID);
     glUniformMatrix4fv(glGetUniformLocation(m_shaderID, "projection"), 1, GL_FALSE, glm::value_ptr(m_projection));
 

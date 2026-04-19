@@ -47,7 +47,7 @@ GLuint TextRenderer::linkProgram(GLuint vertexShader, GLuint fragmentShader) {
 }
 
 // ---------- 构造函数：加载着色器并设置投影 ----------
-TextRenderer::TextRenderer(GLuint screenWidth, GLuint screenHeight) {
+TextRenderer::TextRenderer() {
     // 1. 加载并编译着色器
     std::string vertCode = LoadShader("text_vert.glsl");
     std::string fragCode = LoadShader("text_frag.glsl");
@@ -74,7 +74,7 @@ TextRenderer::TextRenderer(GLuint screenWidth, GLuint screenHeight) {
     }
 
     // 2. 设置正交投影矩阵
-    m_projection = glm::ortho(0.0f, (float)screenWidth, (float)screenHeight, 0.0f, -1.0f, 1.0f);
+    m_projection = glm::ortho(0.0f, (float)Win.WinX, (float)Win.WinY, 0.0f, -1.0f, 1.0f);
     glUseProgram(m_shaderID);
     glUniformMatrix4fv(glGetUniformLocation(m_shaderID, "projection"), 1, GL_FALSE, glm::value_ptr(m_projection));
 
@@ -332,4 +332,12 @@ TextBounds TextRenderer::GetTextBounds(const std::string& text, float x, float y
     bounds.height = maxY - minY;
     bounds.y = minY;  // 实际绘制时的顶部Y
     return bounds;
+}
+
+
+// 更新投影矩阵（窗口大小改变时调用）
+void TextRenderer::UpdateProjection(unsigned int screenWidth, unsigned int screenHeight) {//更新投影矩阵
+    m_projection = glm::ortho(0.0f, (float)screenWidth, (float)screenHeight, 0.0f, -1.0f, 1.0f);//重新计算投影矩阵
+    glUseProgram(m_shaderID);//使用着色器
+    glUniformMatrix4fv(glGetUniformLocation(m_shaderID, "projection"), 1, GL_FALSE, glm::value_ptr(m_projection));//更新 uniform
 }

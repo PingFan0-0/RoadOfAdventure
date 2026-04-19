@@ -14,6 +14,7 @@
 #include"Time.h"
 #include"DrawShape.h"
 
+#pragma region PF
 const char* PF =
 R"(
 ####   #####    ###          ###  
@@ -25,30 +26,25 @@ R"(
 #      #        ###   #####  ###  
 )";
 
+#pragma endregion
 
 
-
-
-
-int INSIZE = 200;
 std::vector<std::string> images;
 
+
+// --------- 添加图片资源 --------------
 int AddImage(std::string way) {
 	if (way == "null")return 0;
-	for (int i = 0; i < CentralData.ImageData.size(); i++) {
-		if (CentralData.ImageData[i].imageway == way) {
+	for (int i = 0; i < images.size(); i++) {
+		if (images[i]== way) {
 			return i;
 		}
 	}//找不到 设置贴图
 	images.emplace_back();
 	images[images.size() - 1] = way;
 	return (int)images.size() - 1;
-	//CentralData.ImageData.emplace_back();
-	//loadimage(&CentralData.ImageData[CentralData.ImageData.size() - 1].image, to_wstring(way).c_str(), INSIZE, INSIZE);//设置贴图
-	//CentralData.ImageData[CentralData.ImageData.size() - 1].imageway = way;//设置路径
-	//return (int)CentralData.ImageData.size() - 1;
 }
-
+// --------- 分析图片资源 --------------
 int ProcessImage() {
 	atlas = createTextureAtlas(images, regions, 64, 2048);
 	if (atlas == 0) {
@@ -70,17 +66,21 @@ int ProcessImage() {
 }
 
 bool Begin() {
+#pragma region 日志 ===============
 	Debug("sss");//清空日志
 	DebugError("sss");//清空错误日志
 	DebugWarn("sss");//清空警告日志
-
-
+#pragma endregion
+#pragma region 文件 ===============
 	GameData("SDR", -1);//读取设置数据
 	Debug("初始化");
+
 	CDW(DataParent);//创建文件夹 Data
 	CDW(DataWayParent);//创建文件夹 GameData 
 	CDW(SetWayParent);//创建文件夹 Set
-
+	CDW(DataWayParent + L"/" + MapParent);//创建文件夹 Set
+#pragma endregion
+#pragma region 初始化 OpenGL ======
 	Debug("创建游戏窗口 " + std::to_string(Win.WinX) + " " + std::to_string(Win.WinY));
 	if (!GLBegin()) {//创建窗口
 		return false;
@@ -97,25 +97,23 @@ bool Begin() {
 		DrawRectShape::GetInstance().UpdateProjection(w, h);
 		});
 
-	//加载游戏资源=====
+#pragma endregion
+#pragma region 游戏资源 ===========
 	Debug("加载游戏资源=====");
-	images.clear();
+	images.clear();//清除图片列表
 	{
 		std::string nullimage = "null.jpg";//null图片资源
-		CentralData.ImageData.emplace_back();
-		CentralData.ImageData[0].imageway = FindFile(DataParent + L"/" + ImageParent, nullimage);//获取路径
-		if (CentralData.ImageData[0].imageway != "null") {
+		std::string Nway = FindFile(DataParent + L"/" + ImageParent, nullimage);//获取路径
+		if (Nway != "null") {
 			images.emplace_back();
-			images[0] = CentralData.ImageData[0].imageway;
-			//loadimage(&CentralData.ImageData[0].image, to_wstring(CentralData.ImageData[0].imageway).c_str(), INSIZE, INSIZE);//加载图片Null
+			images[0] = Nway;
 		}
 		else Error("缺失文件: " + nullimage + " 图片数据缺失", "W");
 	}
 
 	int t1 = clock();
 	std::vector <FileData> FileData = FindJsonAll(DataParent + L"/" + InformationParent);//<-----------------------------查找文件
-	Debug("加载资源== 花费 " + std::to_string((float)(clock() - t1) / 1000)); t1 = clock();
-
+	Debug("扫描了 "+ std::to_string(FileData.size()) + " 个json资源文件==  花费 " + std::to_string((float)(clock() - t1) / 1000)); t1 = clock();
 
 	for (int i = 0; i < FileData.size(); i++) {
 		nlohmann::json js;
@@ -188,17 +186,16 @@ bool Begin() {
 		}
 		//js.clear();
 	}
-	Debug("分析了 " + std::to_string(CentralData.Data.size()) + " 个 资源== 花费 " + std::to_string((float)(clock() - t1) / 1000)); t1 = clock();
+	Debug("分析了 " + std::to_string(CentralData.Data.size()) + " 个有效资源文件==  花费 " + std::to_string((float)(clock() - t1) / 1000)); t1 = clock();
 
 	ProcessImage();//处理图片资源
-
 	Debug("处理了 " + std::to_string(images.size()) + " 个 贴图资源== 花费 " + std::to_string((float)(clock() - t1) / 1000)); t1 = clock();
 	Debug("=====加载游戏资源");
+#pragma endregion
 
 	BoolTheGame = true;//游戏主循环开关
 	YM = "begin";//设置页面为初始页面
 	Error("", "R");
-
 	TimeMath();//时间计算
 
 	return true;

@@ -2,7 +2,7 @@
 
 #include<iostream>
 #include<string>
-#include<graphics.h>
+//#include<graphics.h>
 #include<json.hpp>
 #include<vector>
 
@@ -42,6 +42,9 @@ extern bool BoolWarn;//------------是否显示警告状态
 extern int FPS;//-------------------FPS数值 
 extern int FPSWeek;//---------------FPS循环周期 
 extern long long GameRunTime;//-----游戏时刻 
+
+
+extern std::string FontMain;//字体信息
 
 
 struct StructPlayer {//玩家信息
@@ -115,10 +118,10 @@ struct StructCentralData {//中心数据
 		uint32_t Hand;//指针
 		std::string dataway;//数据路径
 	};
-	struct StructImage {//图片信息-----
-		std::string imageway;//图片路径
-		IMAGE image;//图片数据
-	};
+	//struct StructImage {//图片信息-----
+	//	std::string imageway;//图片路径
+	//	IMAGE image;//图片数据
+	//};
 	struct StructBack {//背景数据-----
 		uint8_t sizex;//x
 		uint8_t sizey;//y
@@ -149,7 +152,7 @@ struct StructCentralData {//中心数据
 		uint16_t ImageHand;//贴图指针
 	};
 	std::vector <CentralData> Data;//数据
-	std::vector <StructImage> ImageData;//图像数据
+	//std::vector <StructImage> ImageData;//图像数据
 	std::vector <StructBack> BackData;//背景数据
 	std::vector <StructBuilding> BuildingData;//建筑数据
 	std::vector <StructUnit> UnitData;//单位数据
@@ -172,7 +175,7 @@ struct StructInput {//输入信息
 	char returnn = 27;//返回
 }; extern StructInput PlayerInput;
 
-extern ExMessage Mouse;//定义鼠标数据
+//extern ExMessage Mouse;//定义鼠标数据s
 extern double MouseX;//鼠标坐标
 extern double MouseY;
 
@@ -180,11 +183,6 @@ extern std::string YM;//当前页面
 
 extern std::string MapName[201];//地图列表
 extern int MapNum;//地图列表 的地图数量
-
-extern std::string ErrorText;//错误信息
-extern int ErrorNum;//错误数量
-extern std::string WarnText;//警告信息
-extern int WarnNum;//警告数量
 
 
 void CDW(const std::wstring& str);//<---------------------------------------------------------------------创建文件夹

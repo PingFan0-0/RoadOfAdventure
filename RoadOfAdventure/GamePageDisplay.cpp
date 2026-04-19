@@ -54,6 +54,7 @@ void ImageDisplay(int x, int y, int size, SXY Size, int img, SpriteRenderer& spr
 }
 
 
+
 void pmsx(TextRenderer& textRenderer, Shader& SH, SpriteRenderer& spriteRenderer) {//<---------------------------------------------------------------屏幕刷新 
 
 	const int Hight = 32;//高度
@@ -264,8 +265,8 @@ void pmsx(TextRenderer& textRenderer, Shader& SH, SpriteRenderer& spriteRenderer
 		}
 	}
 
-#pragma endregion
 
+#pragma endregion
 
 
 	view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);//视图矩阵

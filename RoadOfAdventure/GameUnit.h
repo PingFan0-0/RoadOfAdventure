@@ -3,6 +3,12 @@
 
 #include<string>
 #include<vector>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include "Game.h"
+
+
 
 
 int UnitAdd(int Hand, float X = 0, float Y = 0);//指针添加单位
@@ -25,10 +31,13 @@ public:
 	Unit();//
 	void Begin(float X, float Y, float LifeMax, float SizeX, float SizeY, uint8_t Hand, float M, float F);
 
+	bool IfMove(int x, int y);//是否可以移动
+
+
 	void SetA(float AX, float AY);//设置加速度
-	void SetXY(float X, float Y);//设置位置
+	void SetXYZ(float X, float Y, float Z);//设置位置
 	void Move();//移动
-	void ToF(int FX, int FY);//使用牵引力移动 输入方向
+	void ToF(float FX, float FY);//使用牵引力移动 输入方向
 	void ToV();//计算速度
 	void Tof();//阻力
 	void ToM();//计算质量
@@ -46,6 +55,8 @@ public:
 	struct SNMfloat GetLife();
 	int GetHand();
 
+	glm::vec3 Getglmvec3XYZ();
+
 	bool BoolDEL;//是否存在
 private:
 	uint8_t hand;//相对 CentralData.UnitData
@@ -58,22 +69,25 @@ private:
 		float M;
 	}M;
 	struct StructXY {//坐标
-		float X, Y;
-		float LX, LY;
+		float X, Y, Z;
+		float LX, LY, LZ;
 	}XY;
 	struct StructV {//速度
-		float X, Y;
+		float X, Y, Z;
 	}V;
 	struct StructA{//加速度
-		float X, Y;
+		float X, Y, Z;
 	}A;
 	struct StructLife{//生命
 		float now;
 		float max;
 	}Life;
 	struct StructSize{//大小
-		float X, Y;
+		float X, Y, Z;
 	}Size;
+	struct StructRotation {//旋转角度
+		float X, Y, Z;
+	}Rotation;
 };
 
 

@@ -8,7 +8,7 @@
 
 class SpriteRenderer {
 public:
-    SpriteRenderer(unsigned int screenWidth, unsigned int screenHeight);
+    SpriteRenderer();
     ~SpriteRenderer();
 
     // 绘制精灵（使用图集纹理 + 子图区域）
@@ -17,7 +17,7 @@ public:
         float rotate = 0.0f,
         glm::vec3 color = glm::vec3(1.0f));
 
-    // 可选：更新投影矩阵（窗口大小改变时调用）
+    // 更新投影矩阵（窗口大小改变时调用）
     void UpdateProjection(unsigned int screenWidth, unsigned int screenHeight);
 
 private:
@@ -44,7 +44,7 @@ public:
     StaticSpriteBatch(GLuint atlasTexture);
     ~StaticSpriteBatch();
     void AddSprite(float x, float y, float w, float h, const AtlasRegion& region, const glm::vec4& color = glm::vec4(1.0f));
-    void Build();                     // 调用后不可再添加
+    void Build();// 调用后不可再添加
     void Draw() const;
     void Clear();
 private:
