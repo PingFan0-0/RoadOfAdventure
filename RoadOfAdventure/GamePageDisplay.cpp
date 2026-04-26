@@ -57,6 +57,8 @@ void ImageDisplay(int x, int y, int size, SXY Size, int img, SpriteRenderer& spr
 
 void pmsx(TextRenderer& textRenderer, Shader& SH, SpriteRenderer& spriteRenderer) {//<---------------------------------------------------------------屏幕刷新 
 
+	/*
+
 	const int Hight = 32;//高度
 #pragma region 旧的
 	//if (Win.LastSize != Win.Size) {//当缩放大小改变时
@@ -261,7 +263,7 @@ void pmsx(TextRenderer& textRenderer, Shader& SH, SpriteRenderer& spriteRenderer
 		for (int j = BX; j < EX; j++) {
 			int floor = Map.Data[to_MapHand(j, i)].floor;
 			if(floor == 0)ImageDisplay(j * Win.Size + GX, i * Win.Size + GY, Win.Size, CentralData.BackData[CentralData.Data[floor].Hand].ImageHand, spriteRenderer);//地板
-			else ImageDisplay(j * Win.Size + GX, i * Win.Size + GY, Win.Size, CentralData.WallData[CentralData.Data[floor].Hand].ImageHand, spriteRenderer);//墙
+			else ImageDisplay(j * Win.Size + GX, i * Win.Size + GY, Win.Size, CentralData.BlockData[CentralData.Data[floor].Hand].ImageHand, spriteRenderer);//墙
 		}
 	}
 
@@ -290,4 +292,6 @@ void pmsx(TextRenderer& textRenderer, Shader& SH, SpriteRenderer& spriteRenderer
 	glfwPollEvents();//获取事件
 
 
+
+	*/
 }

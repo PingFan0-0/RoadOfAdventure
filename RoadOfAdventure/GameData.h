@@ -122,11 +122,6 @@ struct StructCentralData {//中心数据
 	//	std::string imageway;//图片路径
 	//	IMAGE image;//图片数据
 	//};
-	struct StructBack {//背景数据-----
-		uint8_t sizex;//x
-		uint8_t sizey;//y
-		uint16_t ImageHand;//贴图指针
-	};
 	struct StructBuilding {//建筑数据-----
 		uint8_t sizex;//x
 		uint8_t sizey;//y
@@ -136,12 +131,15 @@ struct StructCentralData {//中心数据
 		std::string Name;//名字
 		float sizex;//x
 		float sizey;//y
+		float sizez;//z
+		float WithMaxG;//最大承受G
 		float Life;//血条
 		float F;//牵引力
 		float M;//质量
 		uint16_t ImageHand;//贴图指针
 	};
-	struct StructWall {//墙数据-----
+	struct StructBlock {//方块数据-----
+		std::string Name;
 		uint8_t sizex;//x
 		uint8_t sizey;//y
 		uint16_t ImageHand;//贴图指针
@@ -153,12 +151,14 @@ struct StructCentralData {//中心数据
 	};
 	std::vector <CentralData> Data;//数据
 	//std::vector <StructImage> ImageData;//图像数据
-	std::vector <StructBack> BackData;//背景数据
 	std::vector <StructBuilding> BuildingData;//建筑数据
 	std::vector <StructUnit> UnitData;//单位数据
-	std::vector <StructWall> WallData;//墙数据
+	std::vector <StructBlock> BlockData;//方块数据
 	std::vector <StructItem> ItemData;//物品数据
 }; extern StructCentralData CentralData;
+
+extern std::unordered_map<uint16_t, uint16_t> BlockDictionary;  //方块字典数据
+
 
 struct StructTime {//时间信息
 	float LastTime;//---------------上次时间
@@ -199,5 +199,6 @@ int to_MapHand(int x, int y);//<------------------------------------------------
 bool OpenJson(const std::string Way, const std::string WJName, nlohmann::json& jsin);//<------------------打开JSON 分析
 int FindData(std::string name);//-------------------------------------------------------------------------寻找中心数据
 int FindUnitData(std::string name);//---------------------------------------------------------------------寻找Unit数据
+int FindBlockData(std::string name);//--------------------------------------------------------------------寻找Block数据
 bool GameMapData(std::string mapname);//<-----------------------------------------------------------------读取地图文件 
 void GameMapDataClear();//<-------------------------------------------------------------------------------清空地图数据 

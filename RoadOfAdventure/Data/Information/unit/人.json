@@ -6,5 +6,7 @@
 	"life": 100,
 	"sizex": 0.5,
 	"sizey": 0.5,
+	"sizez": 0.5,
+	"withmaxg": 25.0,
 	"introduction": "null"
 }

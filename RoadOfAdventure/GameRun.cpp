@@ -60,9 +60,6 @@ void GameOnRun() {//<----------------------------------------------------------�
 #pragma endregion
 
 		
-		Player.Player = UnitAdd(FindUnitData("人"));
-		UnitData[Player.Player].SetXYZ(1.5f, 1.5f, 1.5f);
-		for (int i = 1; i <= 100; i++) UnitAdd(FindUnitData("人"), 1.5f, 1.5f);
 
 		Debug("游戏开始 ----- >");//测试日志
 		engine.run();
@@ -100,8 +97,6 @@ void GameOnRun() {//<----------------------------------------------------------�
 	//	}
 	//}
 	GameData("GDW", 1);//保存游戏数据
-	UnitDataClear();//清空单位数据
-	GameMapDataClear();//清空地图数据
 
 	engine.MapData.clear();
 	engine.cleanup();

@@ -6,9 +6,9 @@
 #include"TypeConversion.h"
 #include<fstream>
 
-const std::wstring DataWayParent = L"GameData";//----文件夹路径 游戏数据
-const std::wstring SetWayParent = L"Debug";//--------文件夹路径 Debug
-const std::wstring DataParent = L"Data";//-----------文件夹路径 数据 
+const std::wstring DataWayParent = L"GameData";//-------文件夹路径 游戏数据
+const std::wstring SetWayParent = L"ROADebug";//--------文件夹路径 Debug
+const std::wstring DataParent = L"Data";//--------------文件夹路径 数据 
 
 const std::wstring MapParent = L"Map";//------------------------文件夹路径 地图
 const std::wstring ImageParent = L"Image";//--------------------文件夹路径 图片
@@ -18,9 +18,9 @@ const std::wstring FontsParent = L"Fonts";//--------------------文件夹路径 
 
 const std::string GameDataWay = "GameData/GameData.json";//-----文件名称 游戏数据
 const std::string SetDataWay = "GameData/SetData.json";//-------文件名称 设置数据
-const std::string DebugWay = "Debug/Debug.txt";//---------------文件名称 Debug
-const std::string ErrorWay = "Debug/Error.txt";//---------------文件名称 Error
-const std::string WarnWay = "Debug/Warn.txt";//-----------------文件名称 Warn
+const std::string DebugWay = "ROADebug/Debug.txt";//------------文件名称 Debug
+const std::string ErrorWay = "ROADebug/Error.txt";//------------文件名称 Error
+const std::string WarnWay = "ROADebug/Warn.txt";//--------------文件名称 Warn
 
 const std::string BeginMap = "冒险之路.roaworld";//---------------初始的地图 
 
@@ -65,6 +65,8 @@ StructWin Win = {//窗口信息
 
 
 StructCentralData CentralData;//中心数据
+
+std::unordered_map<uint16_t, uint16_t> BlockDictionary;//方块字典
 
 //std::vector <StructImage> ImageData;//图片信息
 
@@ -300,6 +302,19 @@ int FindUnitData(std::string name) {//------------------------------------------
 	return -1;
 }
 
+int FindBlockData(std::string name) {//--------------------------------------------------------------------寻找Block数据
+	static int Hand = 0;
+	if (Hand > CentralData.BlockData.size())Hand = 0;
+	if (Hand != 0) {
+		if (CentralData.BlockData[Hand].Name == name)return Hand;
+		else Hand = 0;
+	}
+
+	for (; Hand < CentralData.BlockData.size(); Hand++) {
+		if (CentralData.BlockData[Hand].Name == name)return Hand;
+	}
+	return -1;
+}
 
 bool GameMapData(std::string mapname) {//<---------------------------------------------读取地图文件 
 	Debug("读取地图=====");

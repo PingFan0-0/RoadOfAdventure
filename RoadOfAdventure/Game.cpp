@@ -40,7 +40,9 @@ Game::Game()
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
-Game::~Game() { cleanup(); }
+Game::~Game() { 
+    cleanup();
+}
 
 // 顶点着色器和片段着色器源码
 #pragma region 着色器 ===============
@@ -141,15 +143,13 @@ bool Game::init() {
 
 // 创建世界（指定渲染半径，区块数量为 (2*radius+1)^2）
 void Game::createWorld(int radius) {
-    //for (int i = 0; i < 4; i++) {
-    //    for (int j = 0; j < 2; j++) {
-    //        MapData.getOrCreateChunk(i, j);
-    //    }
-    //}
+    CDW(DataWayParent + L"/" + MapParent);//创建文件夹 Data - Map
+
     if (FindFile(to_wstring(MapData.MapSaveWay), MapData.MapName) != "null") {//如果游玩过此地图
         std::string way = MapData.MapSaveWay + "/" + MapData.MapName;
+        Debug("开始加载地图 " + way);
         if (MapData.loadFromFile(way)) {
-            Debug("加载地图 " + way);
+            Debug("成功加载地图 " + way);
         }
         else {
             Error("加载地图 " + way + " 失败", "W");
@@ -158,8 +158,9 @@ void Game::createWorld(int radius) {
     }
     else {//如果没有游玩过此地图
         std::string way = MapData.MapWay + "/" + MapData.MapName;
+        Debug("开始加载地图 " + way);
         if (MapData.loadFromFile(way)) {
-            Debug("加载地图 " + way);
+            Debug("成功加载地图 " + way);
         }
         else {
             Error("加载地图 " + way + " 失败", "W");
@@ -180,26 +181,24 @@ void Game::processInput(float dt) {
     glm::vec3 right = glm::normalize(glm::cross(cameraFront, cameraUp));
     glm::vec3 frontHorizontal = glm::normalize(glm::vec3(cameraFront.x, 0.0f, cameraFront.z));
     glm::vec3 move = glm::vec3(0.0f);
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {// 前进 W
         move += frontHorizontal;
-        //cameraPos += frontHorizontal * speed;
     }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {// 后退 S
         move -= frontHorizontal;
-        //cameraPos -= frontHorizontal * speed;
     }
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {// 左移 A
         move -= right;
-        //cameraPos -= right * speed;
     }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {// 右移 D
         move += right;
-        //cameraPos += right * speed;
+    }
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {// 跳 空格
+        UnitData[Player.Player].Jump();
     }
     if (glm::length(move) > 0.0f)//归一化对角线移动
         move = glm::normalize(move);
-
-    if (UnitData[Player.Player].BoolDEL) UnitData[Player.Player].ToF(move.x, move.z);
+    if (UnitData[Player.Player].BoolDEL) UnitData[Player.Player].ToF(move.x, 0, move.z);
     else center += move * speed;
 
     // --------------- ESC 关闭 ---------------
@@ -214,12 +213,12 @@ float yaw = -90.0f, pitch = -89.0f;
 float lastX = (float)Win.WinX / 2, lastY = (float)Win.WinY / 2;
 bool MouseToView = false;
 // ---------- 鼠标移动 ----------
-void mouse_callback_G(GLFWwindow* window, double xpos, double ypos) {
+void Game::mouse_callback_G(GLFWwindow* window, double xpos, double ypos) {
     //Debug(std::to_string(xpos) + " " + std::to_string(ypos));
     MouseX = xpos; MouseY = ypos;
     if (MouseToView) {
-        if (UnitData[Player.Player].BoolDEL) {
-            center = UnitData[Player.Player].Getglmvec3XYZ(); // 旋转中心
+        if (this->UnitData[Player.Player].BoolDEL) {
+            center = this->UnitData[Player.Player].Getglmvec3XYZ(); // 旋转中心
         }
         float radius = glm::distance(cameraPos, center);// 摄像机到中心的距离
         float xoffset = (float)xpos - lastX;
@@ -240,7 +239,7 @@ void mouse_callback_G(GLFWwindow* window, double xpos, double ypos) {
 // ---------- 鼠标滚轮 ----------
 void scroll_callback_G(GLFWwindow* window, double xoffset, double yoffset) {
     radius -= float(yoffset * Time.JGTime * 50.0f);
-    if (radius < 0.5f) radius = 0.5f;
+    if (radius < 0.2f) radius = 0.2f;
 }
 // ---------- 鼠标滚动点击 ------
 void mouse_button_callback_G(GLFWwindow* window, int button, int action, int mods) {
@@ -294,10 +293,25 @@ bool Game::isChunkVisibleTo(const Block* chunk, const glm::mat4& vp) {
 }
 
 void Game::run() {
+#pragma region 清除临时数据 =======
+    
+    BlockDictionary.clear();//方块字典数据
+
+#pragma endregion
+
 #pragma region 窗口 ===============
     glfwSetWindowUserPointer(window, this);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback_G);
 #pragma endregion
+
+#pragma region 单位 ===============
+    Player.Player = UnitAdd(FindUnitData("人"));
+    UnitData[Player.Player].SetXYZ(1.5f, 1.5f, 1.5f);
+    int num = 30; for (int i = 1; i <= 3000; i++) UnitData[UnitAdd(FindUnitData("NPC"))].SetXYZ((float)(i / num) / 2.0f, (25.0f + i * 0.01f) + (i % num * 0.5f), (float)(i % num) / 2.0f);
+    
+
+#pragma endregion
+
 #pragma region 相机 ===============
     model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));//模型矩阵
     view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));//视图矩阵
@@ -316,6 +330,26 @@ void Game::run() {
     cameraPos = center + offset;        // 摄像机位于球面上
     cameraFront = center - cameraPos;   // 视线指向中心
 #pragma endregion
+#pragma region 其他 ===============
+    // ------------- 键盘事件
+    glfwSetKeyCallback(window, [](GLFWwindow* w, int k, int, int a, int) {
+		if (a == GLFW_PRESS) {
+			// ---------- 切换模式 ----------
+			if (k == GLFW_KEY_LEFT_CONTROL) {// 空格 切换显示模式
+				BoolMod = !BoolMod;//切换状态
+				if (BoolMod) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式
+				else  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);//默认模式
+			}
+		}
+	});
+
+
+
+#pragma endregion
+
+#pragma region 地图 ===============
+    MapData.g = 9.8f;//重力加速度
+#pragma endregion
 
     float Tsize = 1.0f;//总的缩放比值
 
@@ -323,10 +357,20 @@ void Game::run() {
     while (YM == "gameon") {
         TimeMath();// 计算时间
 
-        processInput(Time.JGTime);// 处理输入
-        glfwSetCursorPosCallback(window, mouse_callback_G);// 设置鼠标回调
-        glfwSetMouseButtonCallback(window, mouse_button_callback_G);//设置鼠标滚轮点击回调函数
-        glfwSetScrollCallback(window, scroll_callback_G);//设置鼠标滚轮回调函数
+        for (int i = 0; i < UnitData.size(); i++)UnitData[i].UnitResetA();//单位重置加速度
+
+        {
+            processInput(Time.JGTime);// 处理输入
+            glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xpos, double ypos) {
+                Game* game = static_cast<Game*>(glfwGetWindowUserPointer(window));
+                if (game) game->mouse_callback_G(window, xpos, ypos);
+                });//设置鼠标移动回调函数
+            glfwSetMouseButtonCallback(window, mouse_button_callback_G);//设置鼠标滚轮点击回调函数
+            glfwSetScrollCallback(window, scroll_callback_G);//设置鼠标滚轮回调函数
+        }
+
+        for (int i = 1; i < UnitData.size(); i++)UnitData[i].Jump();//跳跃
+
 
 
         for (int i = 0; i < UnitData.size(); i++)UnitData[i].UnitTo();//单位移动计算
@@ -372,10 +416,16 @@ void Game::run() {
 #pragma endregion
 #pragma region 单位 =================
 
-        //for (const auto& obj : m_dynamicObjects) {
-        //    renderDynamicObject(obj);
+        //for (auto& unit : UnitData) {// 遍历单位列表，渲染存在的单位
+        //    if (unit.BoolDEL) {
+        //        unit.MeshData();// 刷新 GPU 网格数据
+        //        glm::mat4 model = glm::mat4(1.0f);
+        //        glUniformMatrix4fv(glGetUniformLocation(m_shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        //        unit.render();
+        //    }
         //}
-
+        UnitRender();//单位渲染
+        
 #pragma endregion
         glDisable(GL_DEPTH_TEST);// 2D UI 渲染通常不需要深度测试
         glEnable(GL_BLEND);// 启用混合
@@ -392,6 +442,13 @@ void Game::run() {
                 ULY++;
             }
             if (BoolZbxs) {
+                glm::vec3 a = UnitData[Player.Player].Getglmvec3LXLYLZ();
+                textRenderer.RenderText(//Last中心XY
+                    "LastcenterPOS: " + std::to_string((int)a.x) + " " + std::to_string((int)a.y) + " " + std::to_string((int)a.z)
+                    , 10.0f, textRenderer.FontSize * ULY * size + h, 1.0f * size, glm::vec3(1.0f));
+                ULY++;
+            }
+            if (BoolZbxs) {
                 textRenderer.RenderText(//中心XY
                     "centerPOS: " + std::to_string((int)center.x) + " " + std::to_string((int)center.y) + " " + std::to_string((int)center.z)
                     , 10.0f, textRenderer.FontSize * ULY * size + h, 1.0f * size, glm::vec3(1.0f));
@@ -404,14 +461,20 @@ void Game::run() {
                 ULY++;
             }
             if (BoolVxs) {
-                SXY a = UnitData[Player.Player].GetV();//V
+                SXYZ a = UnitData[Player.Player].GetV();//V
                 textRenderer.RenderText(
-                    "V:   " + std::to_string(a.X) + " " + std::to_string(a.Y)
+                    "V:   " + std::to_string(a.X) + " " + std::to_string(a.Y) + " " + std::to_string(a.Z)
+                    , 10.0f, textRenderer.FontSize * ULY * size + h, 1.0f * size, glm::vec3(1.0f));
+                ULY++;
+            }
+            if (BoolVxs) {
+                SXYZ a = UnitData[Player.Player].GetA();//A
+                textRenderer.RenderText(
+                    "A:   " + std::to_string(a.X) + " " + std::to_string(a.Y) + " " + std::to_string(a.Z)
                     , 10.0f, textRenderer.FontSize * ULY * size + h, 1.0f * size, glm::vec3(1.0f));
                 ULY++;
             }
             {
-                SXY a = UnitData[Player.Player].GetV();//V
                 textRenderer.RenderText(
                     "滚轮按键:  " + std::string((MouseToView) ? "true" : "false")
                     , 10.0f, textRenderer.FontSize * ULY * size + h, 1.0f * size
@@ -421,6 +484,14 @@ void Game::run() {
             {
                 textRenderer.RenderText(
                     "鼠标坐标:  " + std::to_string((int)MouseX) + " " + std::to_string((int)MouseY)
+                    , 10.0f, textRenderer.FontSize * ULY * size + h, 1.0f * size, glm::vec3(1.0f));
+                ULY++;
+            }
+            {
+                glm::vec3 n = UnitData[Player.Player].Getglmvec3XYZ();
+                glm::vec3 l = UnitData[Player.Player].Getglmvec3LXLYLZ();
+                textRenderer.RenderText(
+                    "高差:  " + std::to_string(n.y - l.y)
                     , 10.0f, textRenderer.FontSize * ULY * size + h, 1.0f * size, glm::vec3(1.0f));
                 ULY++;
             }
@@ -479,9 +550,12 @@ void Game::run() {
         glfwPollEvents();
     }
 
+    Debug("游戏结束 < -----");
+
     std::string way = MapData.MapSaveWay + "/" + MapData.MapName;
+    Debug("开始保存地图 " + way);
     if (MapData.saveToFile(way)) {
-        Debug("保存地图 " + way);
+        Debug("成功保存地图 " + way);
     }
     else {
         Error("保存地图 " + way + "失败", "W");
@@ -494,4 +568,6 @@ void Game::run() {
 // 清理资源
 void Game::cleanup() {
     if (m_shaderProgram) glDeleteProgram(m_shaderProgram);//删除着色器
+    UnitDataClear();//清空单位数据
+    GameMapDataClear();//清空地图数据
 }

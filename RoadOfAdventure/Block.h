@@ -151,6 +151,9 @@ public:
     }
     // 获取方块
     BlockID getBlock(int x, int y, int z) const {
+        if ((unsigned)x >= CHUNK_SIZE || (unsigned)y >= CHUNK_HEIGHT || (unsigned)z >= CHUNK_SIZE) {
+            return AIR; // 安全返回，避免越界访问
+        }
         return m_blocks[index(x, y, z)];
     }
 
@@ -219,7 +222,16 @@ public:
 
         // 通过调色板映射回 BlockID
         for (size_t i = 0; i < indices.size(); ++i) {
-            m_blocks[i] = palette[indices[i]];
+            //m_blocks[i] = CentralData.Data[palette[indices[i]]].Hand;
+            // 
+            //if (palette[indices[i]] == 1)
+            //    m_blocks[i] = 2;
+            //if (palette[indices[i]] == 6)
+            //    m_blocks[i] = 1;
+            //if (palette[indices[i]] == 0)
+            //    m_blocks[i] = 0;
+            
+            m_blocks[i] = BlockDictionary.find(palette[indices[i]])->second;// 根据文件中的字典索引获取实际 BlockID
         }
     }
 
@@ -291,10 +303,10 @@ private:
         vertices.push_back({ v2, uv2, normal });// 添加四个顶点数据
         vertices.push_back({ v3, uv3, normal });// 添加四个顶点数据
 
-        indices.push_back(base);// 添加两个三角形的索引数据
+        indices.push_back(base);    // 添加两个三角形的索引数据
         indices.push_back(base + 1);// 添加两个三角形的索引数据
         indices.push_back(base + 2);// 添加两个三角形的索引数据
-        indices.push_back(base);// 添加两个三角形的索引数据
+        indices.push_back(base);    // 添加两个三角形的索引数据
         indices.push_back(base + 2);// 添加两个三角形的索引数据
         indices.push_back(base + 3);// 添加两个三角形的索引数据
     }
@@ -304,17 +316,17 @@ private:
         std::vector<VertexTo> vertices;// 存储顶点数据
         std::vector<GLuint> indices;// 存储索引数据
 
-        glFrontFace(GL_CW);
+        glFrontFace(GL_CW);// 设置顺时针为正面
+        BlockID BLOCK_AIR = 0;// 定义空气方块的 ID
         for (int x = 0; x < CHUNK_SIZE; ++x) {// 遍历区块内的每个方块位置
             for (int y = 0; y < CHUNK_HEIGHT; ++y) {// 遍历区块内的每个方块位置
                 for (int z = 0; z < CHUNK_SIZE; ++z) {// 获取方块类型
                     BlockID type = m_blocks[index(x, y, z)];// 如果是空气，跳过
-                    BlockID BLOCK_AIR = 0;
                     if (type == BLOCK_AIR) continue;//空气
 
                     glm::vec3 worldPos = glm::vec3(m_cx * CHUNK_SIZE + x, y, m_cz * CHUNK_SIZE + z);// 计算世界坐标（用于生成顶点位置）
-                    glm::vec2 uvMin = regions[type].uvMin;// 获取纹理坐标
-                    glm::vec2 uvMax = regions[type].uvMax;// 获取纹理坐标
+                    glm::vec2 uvMin = regions[CentralData.BlockData[type].ImageHand].uvMin;// 获取纹理坐标
+                    glm::vec2 uvMax = regions[CentralData.BlockData[type].ImageHand].uvMax;// 获取纹理坐标
 
                     // 检查六个方向是否有相邻方块，没有则添加面
                     // 右 (x+1)

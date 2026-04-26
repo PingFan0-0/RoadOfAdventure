@@ -18,7 +18,7 @@ extern UIClickableTextManager& uiManager;
 
 // ---------- 键盘输入 ----------------
 void processInput_Game(GLFWwindow* window, float JGTime) {
-	
+	/*
 	
 	// ---------- 退出 ----------
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {// ESC 关闭
@@ -61,6 +61,7 @@ void processInput_Game(GLFWwindow* window, float JGTime) {
 			else  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);//默认模式
 		}
 		});
+		*/
 }
 // ---------- 鼠标移动事件 ------------
 void mouse_callback_Game(GLFWwindow* window, double xpos, double ypos) {

@@ -23,9 +23,13 @@ constexpr uint16_t VERSION = 1;                  // 版本
 // ====================== 世界容器 ======================
 class WorldMap {
 public:
-    std::string MapName;
-    std::string MapWay;
-    std::string MapSaveWay;
+    std::string MapName;    //地图名字
+    std::string MapWay;     //地图路径
+    std::string MapSaveWay; //地图保存路径
+
+
+    float g; //重力加速度
+
 
     std::unordered_map<int64_t, Block> blocks;  //区块数据
     int blockShift = 4;  // 2^4 = 16

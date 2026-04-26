@@ -78,7 +78,7 @@ bool Begin() {
 	CDW(DataParent);//创建文件夹 Data
 	CDW(DataWayParent);//创建文件夹 GameData 
 	CDW(SetWayParent);//创建文件夹 Set
-	CDW(DataWayParent + L"/" + MapParent);//创建文件夹 Set
+	CDW(DataWayParent + L"/" + MapParent);//创建文件夹 Data - Map
 #pragma endregion
 #pragma region 初始化 OpenGL ======
 	Debug("创建游戏窗口 " + std::to_string(Win.WinX) + " " + std::to_string(Win.WinY));
@@ -109,6 +109,12 @@ bool Begin() {
 			images[0] = Nway;
 		}
 		else Error("缺失文件: " + nullimage + " 图片数据缺失", "W");
+
+		// -- AIR ---
+		CentralData.BlockData.emplace_back();
+		CentralData.BlockData[CentralData.BlockData.size() - 1].sizex = 1;
+		CentralData.BlockData[CentralData.BlockData.size() - 1].sizey = 1;
+		CentralData.BlockData[CentralData.BlockData.size() - 1].Name = "空气";
 	}
 
 	int t1 = clock();
@@ -119,21 +125,14 @@ bool Begin() {
 		nlohmann::json js;
 		std::string suffix = ".jpg";
 		if (OpenJson(FileData[i].way, FileData[i].name, js)) {//读取文件
+			if (!js.contains("type")) {//如果没有 type
+				Error("数据文件: " + FileData[i].name + " 缺失数据 type", "W");
+				continue;
+			}
 			CentralData.Data.push_back({ FileData[i].name, js["type"],0 , FileData[i].way });//将数据存入中心数据
 			if (js.contains("name")) CentralData.Data[i].name = to_Ansi(js["name"]);//name-----
 			else Error("数据文件: " + FileData[i].name + " 缺失数据 name", "W");
-			if (CentralData.Data[i].type == "back") {//如果是背景===============
-				CentralData.Data[i].Hand = (int)CentralData.BackData.size();//写入指针
-				CentralData.BackData.emplace_back();
-				if (js.contains("sizex")) CentralData.BackData[CentralData.BackData.size() - 1].sizex = js["sizex"];//sizex-----
-				else Error("数据文件: " + FileData[i].name + " 缺失数据 sizex", "W");
-				if (js.contains("sizey")) CentralData.BackData[CentralData.BackData.size() - 1].sizey = js["sizey"];//sizey-----
-				else Error("数据文件: " + FileData[i].name + " 缺失数据 sizey", "W");
-				std::string imagename = CentralData.Data[i].name + suffix;//IMAGE-----
-				if (js.contains("image")) imagename = to_Ansi(js["image"]);//获取贴图名称 
-				CentralData.BackData[CentralData.BackData.size() - 1].ImageHand = AddImage(FindFile(DataParent + L"/" + ImageParent, imagename));//返回图片地址  根据名称获取路径
-			}
-			else if (CentralData.Data[i].type == "building") {//建筑===============
+			if (CentralData.Data[i].type == "building") {//建筑===============
 				CentralData.Data[i].Hand = (int)CentralData.BuildingData.size();//写入指针
 				CentralData.BuildingData.emplace_back();
 				if (js.contains("sizex")) CentralData.BuildingData[CentralData.BuildingData.size() - 1].sizex = js["sizex"];//sizex-----
@@ -155,25 +154,30 @@ bool Begin() {
 				if (js.contains("life")) CentralData.UnitData[CentralData.UnitData.size() - 1].Life = js["life"];//Life-----
 				else Error("数据文件: " + FileData[i].name + " 缺失数据 Life最大生命 ", "W");
 				if (js.contains("sizex")) CentralData.UnitData[CentralData.UnitData.size() - 1].sizex = js["sizex"];//sizex-----
-				else Error("数据文件: " + FileData[i].name + " 缺失数据 sizex宽 ", "W");
+				else Error("数据文件: " + FileData[i].name + " 缺失数据 sizex ", "W");
 				if (js.contains("sizey")) CentralData.UnitData[CentralData.UnitData.size() - 1].sizey = js["sizey"];//sizey-----
-				else Error("数据文件: " + FileData[i].name + " 缺失数据 sizey高 ", "W");
+				else Error("数据文件: " + FileData[i].name + " 缺失数据 sizey ", "W");
+				if (js.contains("sizez")) CentralData.UnitData[CentralData.UnitData.size() - 1].sizez = js["sizez"];//sizez-----
+				else Error("数据文件: " + FileData[i].name + " 缺失数据 sizez ", "W");
+				if (js.contains("withmaxg")) CentralData.UnitData[CentralData.UnitData.size() - 1].WithMaxG = js["withmaxg"];//withmaxg-----
+				else Error("数据文件: " + FileData[i].name + " 缺失数据 withmaxg ", "W");
 				std::string imagename = CentralData.Data[i].name + suffix;//IMAGE-----
 				if (js.contains("image")) imagename = to_Ansi(js["image"]);//获取贴图名称 
 				CentralData.UnitData[CentralData.UnitData.size() - 1].ImageHand = AddImage(FindFile(DataParent + L"/" + ImageParent, imagename));//返回图片地址  根据名称获取路径
 			}
-			else if (CentralData.Data[i].type == "wall") {//墙===============
-				CentralData.Data[i].Hand = (int)CentralData.WallData.size();//写入指针
-				CentralData.WallData.emplace_back();
-				if (js.contains("sizex")) CentralData.WallData[CentralData.WallData.size() - 1].sizex = js["sizex"];//sizex-----
+			else if (CentralData.Data[i].type == "block") {//方块===============
+				CentralData.Data[i].Hand = (int)CentralData.BlockData.size();//写入指针
+				CentralData.BlockData.emplace_back();
+				CentralData.BlockData[CentralData.BlockData.size() - 1].Name = CentralData.Data[i].name;//name-----
+				if (js.contains("sizex")) CentralData.BlockData[CentralData.BlockData.size() - 1].sizex = js["sizex"];//sizex-----
 				else Error("数据文件: " + FileData[i].name + " 缺失数据 sizex", "W");
-				if (js.contains("sizey")) CentralData.WallData[CentralData.WallData.size() - 1].sizey = js["sizey"];//sizey-----
+				if (js.contains("sizey")) CentralData.BlockData[CentralData.BlockData.size() - 1].sizey = js["sizey"];//sizey-----
 				else Error("数据文件: " + FileData[i].name + " 缺失数据 sizey", "W");
 				std::string imagename = CentralData.Data[i].name + suffix;//IMAGE-----
 				if (js.contains("image")) imagename = to_Ansi(js["image"]);//获取贴图名称 
-				CentralData.WallData[CentralData.WallData.size() - 1].ImageHand = AddImage(FindFile(DataParent + L"/" + ImageParent, imagename));//返回图片地址  根据名称获取路径
+				CentralData.BlockData[CentralData.BlockData.size() - 1].ImageHand = AddImage(FindFile(DataParent + L"/" + ImageParent, imagename));//返回图片地址  根据名称获取路径
 			}
-			else if (CentralData.Data[i].type == "item") {//墙===============
+			else if (CentralData.Data[i].type == "item") {//物品===============
 				CentralData.Data[i].Hand = (int)CentralData.ItemData.size();//写入指针
 				CentralData.ItemData.emplace_back();
 				CentralData.ItemData[CentralData.ItemData.size() - 1].Name = CentralData.Data[i].name;//name-----
