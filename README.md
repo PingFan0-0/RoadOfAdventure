@@ -13,7 +13,6 @@
 + 项目初创时间: 2026/2/13
 + 项目目前使用了 **OpenGL** **freetype** 图形库
 + **PF** 文件夹中是所用到的**include**与**lib**
-+ 目前项目还没有完全从 **EasyX**转移到**OpenGL** 还有EasyX的代码
 
 - 项目使用到了 **[Astro-2539](https://github.com/Astro-2539)** 开发的**字体** [Z Labs RoundPix 16px](https://github.com/Astro-2539/ZLabs-RoundPix-16px)
 
